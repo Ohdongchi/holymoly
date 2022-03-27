@@ -4,8 +4,6 @@ tmp/
 temp/
 ormConfig.json
 tsconfig.json
-.env
-
 
 # compiled output
 /dist
