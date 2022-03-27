@@ -1,0 +1,58 @@
+.Login-container {
+  width: 80%;
+  height: 35vh;
+  line-height: 35vh;
+  margin: 0 auto;
+}
+.Login-container > .Login-form {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.Login-container > .Login-form > * {
+  display: block;
+  width: 30vw;
+  height: 40px;
+  line-height: 40px;
+  margin: 1vh auto;
+  box-sizing: border-box;
+  align-items: center;
+  align-content: center;
+}
+
+.Login-container > .Login-form > label {
+  font-weight: bold;
+}
+.Login-container > .Login-form > .password-division {
+  position: relative;
+}
+.Login-container > .Login-form > .password-division > * {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  align-items: center;
+  align-content: center;
+}
+.Login-container > .Login-form > .password-division > input[type="checkbox"] {
+  display: inline-block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  line-height: 20px;
+  right: 10px;
+  top: 10px;
+  bottom: 0;
+}
+
+.Login-container > .Login-form > input[type="submit"] {
+  font-weight: bold;
+  border: 1px dashed black;
+  box-sizing: border-box;
+  background-color: rgba(125, 218, 255, 0.781);
+}

@@ -1,0 +1,30 @@
+.chatting-container {
+  width: 35vw;
+  margin: 15px auto;
+}
+
+.chatting-container > .chatting-room {
+  width: 100%;
+  height: 700px;
+  background-color: aqua;
+}
+.chatting-panel-box > form {
+}
+
+.chatting-panel-box > form > .chatting-text {
+  display: inline-block;
+  width: 20em;
+  height: 30px;
+  line-height: 30px;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+.chatting-panel-box > form > .chatting-submit {
+  display: inline-block;
+  width: auto;
+  height: 30px;
+  line-height: 30px;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
