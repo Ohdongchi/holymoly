@@ -10,7 +10,7 @@ import {
 } from "@nestjs/websockets";
 import { Logger } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
-import { WebSocketDto } from "src/dto/WebSocketDto";
+import { WebSocketDto } from "src/Dto/WebSocketDto";
 @WebSocketGateway(3003, {
   namespace: "/chat",
   cors: true,

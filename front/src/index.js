@@ -4,14 +4,21 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./Component/App";
 import reportWebVitals from "./reportWebVitals";
 import { CookiesProvider } from "react-cookie";
+import { Provider } from "react-redux";
+import { applyMiddleware, createStore } from "redux";
+import { logger } from "redux-logger";
+import rootReducer from "./store/index";
+const store = createStore(rootReducer, applyMiddleware(logger));
 
 ReactDOM.render(
   <React.StrictMode>
-    <CookiesProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </CookiesProvider>
+    <Provider store={store}>
+      <CookiesProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </CookiesProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );
