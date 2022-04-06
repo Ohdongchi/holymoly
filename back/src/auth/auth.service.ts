@@ -1,4 +1,4 @@
-import { HttpException, Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import {
   Connection,
   getConnection,
@@ -11,7 +11,7 @@ import { User } from "./../models/User.entity";
 import { JwtService } from "@nestjs/jwt/dist/jwt.service";
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(private jwtService: JwtService) { }
 
   async validateUser(email: string, password: string): Promise<any> {
     const conn = getConnection("waydn");
@@ -21,7 +21,7 @@ export class AuthService {
       .getOne();
 
     if (!user) {
-      return null;
+      throw new UnauthorizedException("사용자를 찾을 수 없습니다.");
     }
 
     return user;
@@ -34,41 +34,46 @@ export class AuthService {
     const user = await User.createQueryBuilder("user")
       .where("user.email = :email", { email: payload.email })
       .getOne();
-    console.log(user);
+    console.log(`user : ${user}`);
     if (!user) {
       // save
-      try {
-        conn.transaction(async (queryRunnerManager) => {
-          const newUser = new User();
-          newUser.email = payload.email;
-          newUser.password = bcrypt.hashSync(payload.password, 10);
-          newUser.nickname = payload.nickname;
-          newUser.birthDay = payload.birthDay;
-          newUser.profileImage = payload.profileImg;
-          await queryRunnerManager.save(newUser);
-        });
-      } catch (err) {
-        console.error(err);
-      }
+      conn.transaction(async (queryRunnerManager) => {
+        const newUser = new User();
+        newUser.email = payload.email;
+        newUser.password = bcrypt.hashSync(payload.password, 10);
+        newUser.nickname = payload.nickname;
+        newUser.birthDay = payload.birthDay;
+        newUser.profileImage = payload.profileImg;
+        await queryRunnerManager.save(newUser);
+      });
       return { message: "ok" };
     } else {
       throw new HttpException("이미 존재하는 사용자 입니다.", 401);
     }
   }
 
-  async Login(userData: LoginPayloadDto): Promise<any> {
+  async Login(payload: LoginPayloadDto): Promise<any> {
     const conn = getConnection("waydn");
     User.useConnection(conn);
 
     const user = await User.createQueryBuilder("user")
-      .where("user.email =:email", { email: userData.email })
+      .where("user.email =:email", { email: payload.email })
       .getOne();
+
+    const passCompare = await bcrypt.compare(payload.password, user.password);
+
+
     if (!user) {
       throw new NotFoundException("찾을 수 없는 사용자입니다.");
     }
 
-    // write passport login logic
+    const data = {
+      userId: user.id,
+      email: user.email,
+    }
 
-    return { message: "ok" };
+    return {
+      access_token: this.jwtService.sign(data),
+    }
   }
 }

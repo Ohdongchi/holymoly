@@ -13,12 +13,15 @@ import { LoginPayloadDto, RegisterPayloadDto } from "../Dto/auth.dto";
 // import { LocalAuthGuard } from "./guard/local-auth.guard";
 import { AuthGuard } from "@nestjs/passport";
 import * as bcrypt from "bcrypt";
+import { LocalAuthGuard, } from "./guard/local-auth.guard";
+import { JwtAuthGuard } from "./guard/jwt-auth.guard";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
-  @UseGuards(AuthGuard("local"))
+
+  @UseGuards(LocalAuthGuard)
   @Post("/login")
   async Login(
     @Request() req: any,
@@ -27,6 +30,7 @@ export class AuthController {
     return await this.authService.Login(payload);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post("/register")
   async Register(
     @Request() req: any,

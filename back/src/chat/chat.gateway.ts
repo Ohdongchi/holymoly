@@ -34,7 +34,8 @@ export class ChatGateway
   // Server = 서버 데이터 Socket = 클라이언트 데이터
   // 연결됐을 때
   handleConnection(@ConnectedSocket() client: Socket) {
-    console.log("connected websocket");
+    console.log(`connected websocket`);
+    console.log(client.data);
 
     client.emit("hello", client.nsp.name);
   }

@@ -62,25 +62,4 @@ export class LoginPayloadDto {
   @IsDefined()
   @IsString()
   password: string;
-
-  @ApiProperty({
-    type: "string",
-  })
-  @IsDefined()
-  @IsString()
-  nickname: string;
-
-  @ApiProperty({
-    type: "string",
-  })
-  @IsDefined()
-  @IsString()
-  profile_image: string;
-
-  @ApiProperty({
-    type: "date",
-  })
-  @IsDefined()
-  @IsDate()
-  age: Date;
 }

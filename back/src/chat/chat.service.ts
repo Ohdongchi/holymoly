@@ -7,6 +7,8 @@ export class ChatService {
      
 
     createChatRoom(client:Socket, payload: WebSocketDto): void { 
+        const roomId = payload.room;
+        
         
     }
 }
