@@ -9,15 +9,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private configService: ConfigService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromHeader("access_token"),
       ignoreExpiration: false,
       secretOrKey: configService.get<string>("JWT_SECRET_KEY"),
+
     });
   }
 
   async validate(payload: any) {
-    console.log(payload);
-    // return { email: payload.email, userId: payload.userId }
+    return { userId: payload.userId, email: payload.email };
   }
 }
 

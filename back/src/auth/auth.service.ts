@@ -13,7 +13,7 @@ import { JwtService } from "@nestjs/jwt/dist/jwt.service";
 export class AuthService {
   constructor(private jwtService: JwtService) { }
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string): Promise<any> {
     const conn = getConnection("waydn");
     User.useConnection(conn);
     const user = await User.createQueryBuilder("user")

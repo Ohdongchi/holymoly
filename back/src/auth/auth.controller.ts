@@ -31,6 +31,13 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post("test")
+  async test(@Request() req: any): Promise<any> {
+    console.log("req.user: ", req.user);
+    return {message: "ok"};
+  }
+
+
   @Post("/register")
   async Register(
     @Request() req: any,
