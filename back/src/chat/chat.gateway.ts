@@ -8,22 +8,24 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from "@nestjs/websockets";
-import { Logger } from "@nestjs/common";
+import { Logger, Request, UseGuards } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
 import { WebSocketDto } from "src/Dto/WebSocketDto";
+import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 @WebSocketGateway(3003, {
   namespace: "/chat",
   cors: true,
 })
 export class ChatGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() public server: Server;
   private logger: Logger = new Logger(ChatGateway.name);
 
+  @UseGuards(JwtAuthGuard)
   @SubscribeMessage("message")
-  handleMessage(@MessageBody() data: any, client: Socket) {
-    
+  handleMessage(@MessageBody() data: any, @Request() req: any, client: Socket) {
+    // console.log(req.user);
+    console.log(data);
   }
 
   // front back 둘다 emit으로 날리면 on으로 받는다
