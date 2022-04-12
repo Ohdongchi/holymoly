@@ -6,7 +6,7 @@ import {
   TransactionManager,
 } from "typeorm";
 import * as bcrypt from "bcrypt";
-import { LoginPayloadDto, RegisterPayloadDto } from "../Dto/auth.dto";
+import { JwtAuthUser, LoginPayloadDto, RegisterPayloadDto } from "../Dto/auth.dto";
 import { User } from "./../models/User.entity";
 import { JwtService } from "@nestjs/jwt/dist/jwt.service";
 @Injectable()
@@ -23,7 +23,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException("사용자를 찾을 수 없습니다.");
     }
-
+    console.log("validate", user);
     return user;
   }
 
@@ -34,7 +34,6 @@ export class AuthService {
     const user = await User.createQueryBuilder("user")
       .where("user.email = :email", { email: payload.email })
       .getOne();
-    console.log(`user : ${user}`);
     if (!user) {
       // save
       conn.transaction(async (queryRunnerManager) => {
@@ -67,9 +66,12 @@ export class AuthService {
       throw new NotFoundException("찾을 수 없는 사용자입니다.");
     }
 
-    const data = {
+    const data: JwtAuthUser = {
       userId: user.id,
       email: user.email,
+      nickname: user.nickname,
+      birthDay: user.birthDay,
+      image: user.profileImage,
     }
 
     return {

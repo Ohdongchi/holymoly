@@ -5,10 +5,10 @@ import { WebSocketDto } from '../Dto/WebSocketDto';
 @Injectable()
 export class ChatService {
      
+    async createChatRoom(client:Socket, payload: WebSocketDto, req: any): Promise<any> { 
+        const roomName = payload.room;
+        const host = req.user.id;
 
-    createChatRoom(client:Socket, payload: WebSocketDto): void { 
-        const roomId = payload.room;
-        
-        
+        return;
     }
 }

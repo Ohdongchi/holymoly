@@ -12,9 +12,12 @@ export class WebSocketDto {
 
   @ApiProperty()
   @IsString()
-  token: string;
+  nickname: string;
+}
 
+
+export class CreateChatRommDto {
   @ApiProperty()
   @IsString()
-  nickname: string;
+  room_name: string;
 }

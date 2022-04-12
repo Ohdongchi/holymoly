@@ -8,23 +8,35 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from "@nestjs/websockets";
-import { Logger, Request, UseGuards } from "@nestjs/common";
+import { Header, Headers, Logger, Request, UseGuards } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
 import { WebSocketDto } from "src/Dto/WebSocketDto";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
+import { ChatService } from "./chat.service";
 @WebSocketGateway(3003, {
   namespace: "/chat",
   cors: true,
 })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+
+  constructor(
+    private chatService: ChatService,
+  ) { }
+
   @WebSocketServer() public server: Server;
   private logger: Logger = new Logger(ChatGateway.name);
 
   @UseGuards(JwtAuthGuard)
+  @SubscribeMessage("createChatRoom")
+  async createChatRoom(@MessageBody() payload: any, @Request() req: any, client:Socket): Promise<any> {
+    
+  }
+
+  @UseGuards(JwtAuthGuard)
   @SubscribeMessage("message")
-  handleMessage(@MessageBody() data: any, @Request() req: any, client: Socket) {
-    // console.log(req.user);
+  async handleMessage(@MessageBody() data: WebSocketDto, @Request() req: any, client: Socket) {
+    // this.chatService.createChatRoom(client, data, req); 
     console.log(data);
   }
 

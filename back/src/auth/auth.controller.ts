@@ -33,7 +33,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post("test")
   async test(@Request() req: any): Promise<any> {
-    console.log("req.user: ", req.user);
+    console.log(req.user);
     return {message: "ok"};
   }
 

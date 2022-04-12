@@ -37,7 +37,7 @@ export class RegisterPayloadDto {
   birthDay: Date;
 
   @ApiPropertyOptional({
-    type:"string",
+    type: "string",
     default: "https://via.placeholder.com/50"
   })
   @IsOptional()
@@ -62,4 +62,28 @@ export class LoginPayloadDto {
   @IsDefined()
   @IsString()
   password: string;
+}
+
+export class JwtAuthUser {
+  @ApiProperty()
+  @IsNumber()
+  @IsDefined()
+  userId: number;
+
+  @ApiProperty()
+  @IsString()
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  nickname: string;
+
+  @ApiProperty()
+  @IsDate()
+  birthDay: Date;
+
+  @ApiProperty()
+  @IsString()
+  image: string;
+
 }
