@@ -7,7 +7,11 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  OneToOne,
 } from "typeorm";
+import { Role } from "./Role.entity";
+import { Room } from "./Room.entity";
 
 @Entity({ name: "user" })
 export class User extends BaseEntity {
@@ -43,6 +47,13 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Room, (room) => room.user)
+  room: Room[];
+
+  @OneToMany(() => Role, (role) => role.user)
+  role: Role[];
+
 
   static fundById(id: number) {
     return this.createQueryBuilder("user")

@@ -1,3 +1,5 @@
+// Temp
+
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -19,13 +21,7 @@ export class Category extends BaseEntity {
     default: "group_name",
     length: "30",
   })
-  categoryName: string;
-
-  @Column({
-    type: "varchar",
-    length: "30",
-  })
-  roomName: string;
+  category: string;
 
   static fundById(id: number) {
     return this.createQueryBuilder("category")
