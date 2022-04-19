@@ -17,7 +17,7 @@ import {
 import { User } from "../User.entity";
 
 @Entity({name:"UserHashTag"})
-export class HashTag extends BaseEntity {
+export class UserHashTag extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
     
