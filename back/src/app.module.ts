@@ -43,7 +43,7 @@ import { AuthModule } from './auth/auth.module';
           cli: {
             // "migrations": "src/migration"
           },
-          synchronize: true,
+          synchronize: false,
         };
       },
       inject: [ConfigService],

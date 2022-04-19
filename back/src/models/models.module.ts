@@ -13,7 +13,7 @@ import { User } from "./User.entity";
   imports: [TypeOrmModule.forFeature([
     User,
     Room,
-    Role,
+    // Role,
     HashTag,
     ChatLog,
     RoomHashTag,

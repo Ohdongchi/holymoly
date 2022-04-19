@@ -14,8 +14,6 @@ import {
     OneToOne,
     JoinTable,
 } from "typeorm";
-import { Room } from "./Room.entity";
-import { User } from "./User.entity";
 
 @Entity({ name: "ChatLog" })
 export class ChatLog extends BaseEntity {
