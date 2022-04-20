@@ -16,6 +16,7 @@ import {
 
 import { RoleType } from "./RoleType/RoleType";
 import { User } from "./User.entity";
+import { UserRole } from './Neutrality/UserRole.entity';
 
 @Entity({ name: "Role" })
 export class Role extends BaseEntity {
@@ -23,11 +24,10 @@ export class Role extends BaseEntity {
     id: number;
 
     @Column({
-        type: "enum",
-        enum:  [RoleType]
+        type: "varchar",
     }) 
-    role: RoleType;
+    role: string;
     
-    @ManyToOne(() => User, (user) => user.id)
-    user: User;
+    @OneToMany(() => UserRole, (userRole) => userRole.role)
+    user: UserRole[];
 }

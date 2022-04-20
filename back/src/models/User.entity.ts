@@ -12,6 +12,7 @@ import {
 } from "typeorm";
 import { Role } from "./Role.entity";
 import { Room } from "./Room.entity";
+import { UserRole } from './Neutrality/UserRole.entity';
 
 @Entity({ name: "user" })
 export class User extends BaseEntity {
@@ -51,8 +52,8 @@ export class User extends BaseEntity {
   @OneToMany(() => Room, (room) => room.user)
   room: Room[];
 
-  @OneToMany(() => Role, (role) => role.user)
-  role: Role[];
+  @OneToMany(() => UserRole, (userRole) =>userRole.user)
+  role: UserRole[];
 
 
   static fundById(id: number) {
