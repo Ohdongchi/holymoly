@@ -14,12 +14,15 @@ import {
     OneToOne,
     JoinTable,
 } from "typeorm";
+import { HashTag } from "../HashTag.entity";
+import { Room } from "../Room.entity";
+import { User } from "../User.entity";
 
-@Entity({name:"RoomHashTag"})
+@Entity({ name: "RoomHashTag" })
 export class RoomHashTag extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
-    
+
     @Column({
         type: "int",
     })
@@ -29,4 +32,10 @@ export class RoomHashTag extends BaseEntity {
         type: "int"
     })
     hashTagId: number;
+
+    @ManyToOne(() => Room, room => room.hashTag)
+    room: Room;
+
+    @ManyToOne(() => HashTag, hashTag => hashTag.roomHashTag)
+    hashTag: HashTag;
 }

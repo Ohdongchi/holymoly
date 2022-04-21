@@ -14,6 +14,8 @@ import {
     OneToOne,
     JoinTable,
 } from "typeorm";
+import { RoomHashTag } from "./Neutrality/RoomHashTag.entity";
+import { UserHashTag } from "./Neutrality/UserHashTag.entity";
 
 @Entity({name: "HashTag"})
 export class HashTag extends BaseEntity {
@@ -25,4 +27,10 @@ export class HashTag extends BaseEntity {
         length: "30",
     })
     hashTag: string;
+
+    @OneToMany(()=>UserHashTag, (userHashTag) => userHashTag.hashTag)
+    userHashTag: UserHashTag[];
+
+    @OneToMany(()=> RoomHashTag, roomHashTag => roomHashTag.hashTag)
+    roomHashTag: RoomHashTag[]
 }

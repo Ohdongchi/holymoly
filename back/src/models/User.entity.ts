@@ -13,6 +13,7 @@ import {
 import { Role } from "./Role.entity";
 import { Room } from "./Room.entity";
 import { UserRole } from './Neutrality/UserRole.entity';
+import { UserHashTag } from "./Neutrality/UserHashTag.entity";
 
 @Entity({ name: "user" })
 export class User extends BaseEntity {
@@ -55,6 +56,8 @@ export class User extends BaseEntity {
   @OneToMany(() => UserRole, (userRole) =>userRole.user)
   role: UserRole[];
 
+  @OneToMany(()=> UserHashTag, userHashTag=>userHashTag.user)
+  hashTag: UserHashTag[];
 
   static fundById(id: number) {
     return this.createQueryBuilder("user")

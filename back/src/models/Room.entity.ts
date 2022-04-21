@@ -13,6 +13,7 @@ import {
     OneToMany,
 } from "typeorm";
 import { ChatLog } from "./ChatLog.entity";
+import { RoomHashTag } from "./Neutrality/RoomHashTag.entity";
 
 import { User } from "./User.entity";
 @Entity({ name: "Room" })
@@ -41,8 +42,11 @@ export class Room extends BaseEntity {
     createdAt: Date;
 
     @ManyToOne(() => User, (user) => user.id)
-    @JoinColumn({name: "host"})
+    @JoinColumn({ name: "host" })
     user: User;
+
+    @OneToMany(() => RoomHashTag, roomHashTag => roomHashTag.room)
+    hashTag: RoomHashTag[];
 
     static fundById(id: number) {
         return this.createQueryBuilder("Room")
