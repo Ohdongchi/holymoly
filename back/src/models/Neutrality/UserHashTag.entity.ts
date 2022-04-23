@@ -33,8 +33,10 @@ export class UserHashTag extends BaseEntity {
     hashTagId: number;
 
     @ManyToOne(() => User, user => user.hashTag)
+    @JoinColumn({ name: "userId" })
     user: User;
 
     @ManyToOne(() => HashTag, hashTag => hashTag.userHashTag)
+    @JoinColumn({ name: "hashTagId" })
     hashTag: HashTag;
 }

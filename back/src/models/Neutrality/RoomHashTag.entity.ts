@@ -26,7 +26,7 @@ export class RoomHashTag extends BaseEntity {
     @Column({
         type: "int",
     })
-    userId: number;
+    roomId: number;
 
     @Column({
         type: "int"
@@ -34,8 +34,10 @@ export class RoomHashTag extends BaseEntity {
     hashTagId: number;
 
     @ManyToOne(() => Room, room => room.hashTag)
+    @JoinColumn({ name: "roomId" })
     room: Room;
 
     @ManyToOne(() => HashTag, hashTag => hashTag.roomHashTag)
+    @JoinColumn({ name: "hashTagId" })
     hashTag: HashTag;
 }
