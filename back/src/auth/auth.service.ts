@@ -54,7 +54,6 @@ export class AuthService {
   async Login(payload: LoginPayloadDto): Promise<any> {
     const conn = getConnection("waydn");
     User.useConnection(conn);
-
     const user = await User.createQueryBuilder("user")
       .where("user.email =:email", { email: payload.email })
       .getOne();

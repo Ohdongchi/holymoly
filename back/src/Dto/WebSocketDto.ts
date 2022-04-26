@@ -1,23 +1,26 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsDecimal, IsDefined, IsOptional, IsString } from "class-validator";
 
-export class WebSocketDto {
+export class WebSocketCreateRoomDto {
   @ApiProperty()
+  @IsDefined()
   @IsString()
-  room: string;
-
-  @ApiProperty()
-  @IsString()
-  msg: string;
+  roomName: string;
 
   @ApiProperty()
+  @IsDefined()
   @IsString()
-  nickname: string;
+  personel: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  hashTag: string;
 }
 
-
-export class CreateChatRommDto {
+export class WebsocketDeleteRoomDto {
   @ApiProperty()
+  @IsDefined()
   @IsString()
-  room_name: string;
+  roomName: string;S
 }

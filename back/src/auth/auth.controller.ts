@@ -20,8 +20,6 @@ import { JwtAuthGuard } from "./guard/jwt-auth.guard";
 export class AuthController {
   constructor(private authService: AuthService) { }
 
-
-  @UseGuards(LocalAuthGuard)
   @Post("/login")
   async Login(
     @Request() req: any,
@@ -36,7 +34,6 @@ export class AuthController {
     console.log(req.user);
     return {message: "ok"};
   }
-
 
   @Post("/register")
   async Register(

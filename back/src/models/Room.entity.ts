@@ -41,6 +41,12 @@ export class Room extends BaseEntity {
     @CreateDateColumn()
     createdAt: Date;
 
+    @DeleteDateColumn()
+    deletedAt: Date;
+    
+    @UpdateDateColumn()
+    updatedAt: Date;
+
     @ManyToOne(() => User, (user) => user.id)
     @JoinColumn({ name: "host" })
     user: User;
