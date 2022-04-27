@@ -12,8 +12,9 @@ import {
 } from "typeorm";
 import { Role } from "./Role.entity";
 import { Room } from "./Room.entity";
-import { UserRole } from './Neutrality/UserRole.entity';
+import { UserRole } from "./Neutrality/UserRole.entity";
 import { UserHashTag } from "./Neutrality/UserHashTag.entity";
+import { RoomMember } from "./Neutrality/RoomMember.entity";
 
 @Entity({ name: "user" })
 export class User extends BaseEntity {
@@ -53,11 +54,14 @@ export class User extends BaseEntity {
   @OneToMany(() => Room, (room) => room.user)
   room: Room[];
 
-  @OneToMany(() => UserRole, (userRole) =>userRole.user)
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
   role: UserRole[];
 
-  @OneToMany(()=> UserHashTag, userHashTag=>userHashTag.user)
+  @OneToMany(() => UserHashTag, (userHashTag) => userHashTag.user)
   hashTag: UserHashTag[];
+
+  @OneToMany(() => RoomMember, (roomMember) => roomMember.user)
+  roomMember: RoomMember[];
 
   static fundById(id: number) {
     return this.createQueryBuilder("user")
