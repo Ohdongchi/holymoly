@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsDecimal, IsDefined, IsOptional, IsString } from "class-validator";
+import { IsDecimal, IsDefined, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class WebSocketCreateRoomDto {
   @ApiProperty()
@@ -22,5 +22,17 @@ export class WebsocketDeleteRoomDto {
   @ApiProperty()
   @IsDefined()
   @IsString()
-  roomName: string;S
+  roomName: string;
 }
+
+export class SendMessageDto {
+  @ApiProperty()
+  @IsDefined()
+  message: any
+
+  @ApiProperty()
+  @IsDefined()
+  @IsNumber()
+  roomId: number;
+  
+} 
