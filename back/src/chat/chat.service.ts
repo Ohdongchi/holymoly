@@ -52,7 +52,8 @@ export class ChatService {
 
             client.data.roomName = room.roomName;
             client.join(room.roomName);
-            client.to(room.roomName).emit("getMessage", {
+            client.to(room.roomName).emit("STCCreateRoom", {
+                userId: req.user.userId,
                 nickname: req.user.nickname,
                 message: `${req.user.nickname}님이 ${room.roomName}방을 개설하셨습니다.`,
             });
@@ -94,8 +95,15 @@ export class ChatService {
         return findRoomAll;
     }
 
-    async getAllChatRoomLog(client: Socket, req: any): Promise<any> {
+    async getAllChatLog(client: Socket, roomId: any, req: any): Promise<any> {
+        const conn = getConnection("waydn");
+        ChatLog.useConnection(conn);
 
+        const log = await ChatLog.createQueryBuilder("chatLog") // ChatLog => 별명으로 chatLog
+            .where("chatlog.roomId = :roomId", { roomId })
+            .getMany();
+
+        return log;
     }
 
     async sendMessage(client: Socket, payload: SendMessageDto, req: any): Promise<any> {
@@ -103,11 +111,10 @@ export class ChatService {
         ChatLog.useConnection(conn);
         Room.useConnection(conn);
 
-        const roomName = Room.createQueryBuilder("room")
-            .select(["room.roomName"])
-            .where("roomId = :roomId", { roomId: payload.roomId });
-
-        console.log(client)
+        const roomName = await Room.createQueryBuilder("room")
+            .select(["room.roomName as roomName"])
+            .where("room.id = :roomId", { roomId: payload.roomId })
+            .getRawOne();
         // await conn.transaction(async queryRunnerManager => {
         //     let log = new ChatLog();
         //     log.message = payload.message;
@@ -115,6 +122,12 @@ export class ChatService {
         //     log.roomId = payload.roomId;
         //     await queryRunnerManager.save(log);
         // });
+
+        client.to(roomName.roomName).emit("STCMessage", {
+            userId: req.user.userId,
+            nickname: req.user.nickname,
+            message: payload.message,
+        })
     }
 
 }

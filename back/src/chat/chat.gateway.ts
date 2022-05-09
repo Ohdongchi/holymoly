@@ -51,7 +51,7 @@ export class ChatGateway
 
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage("sendMessage")
-  async sendMessage(@MessageBody() payload: SendMessageDto, @Request() req: any, client: Socket) {
+  async sendMessage(@ConnectedSocket() client: Socket, @MessageBody() payload: SendMessageDto, @Request() req: any) {
     console.log("client", client);
     return await this.chatService.sendMessage(client, payload, req);
   }
