@@ -20,20 +20,20 @@ const ChattingBox = ({ value }) => {
     }
 
     const onSubmitHandler = (e) => {
-
-        const req = {
+        const data = {
             room: "room1",
             msg: "room1에 연결합니다 !",
-            token: ""
         };
-        socket.emit("test", req);
+        socket.emit("createChatRoom", data);
         alert("실행");
     }
     return (
         <div className="chatting-container">
 
             <div className="chatting-room">
-                { }
+                {
+                    
+                }
             </div>
             <div className="chatting-panel-box">
                 <form onSubmit={onSubmitHandler}>

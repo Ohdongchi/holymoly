@@ -13,6 +13,9 @@ import { Server, Socket } from "socket.io";
 import { SendMessageDto, WebSocketCreateRoomDto } from "src/Dto/WebSocketDto";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 import { ChatService } from "./chat.service";
+
+import * as dayjs from "dayjs";
+
 @WebSocketGateway(3003, {
   namespace: "/chat",
   cors: true,
@@ -64,13 +67,12 @@ export class ChatGateway
   // 연결됐을 때
 
   handleConnection(@ConnectedSocket() client: Socket) {
-    console.log(`connected websocket`);
+    console.log(`connected websocket ${new Date()}`);
     // console.log(client);
     client.emit("hello", client.nsp.name);
   }
   // 연결 종료됐을 때
   handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`client disconnected: ${client.id}`);
-    client.nsp.emit("onLineList", "");
   }
 }

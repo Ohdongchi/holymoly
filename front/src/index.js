@@ -7,7 +7,7 @@ import { CookiesProvider } from "react-cookie";
 import { Provider } from "react-redux";
 import { applyMiddleware, createStore } from "redux";
 import { logger } from "redux-logger";
-import rootReducer from "./store/index";
+import rootReducer from "./store/redux/RootReducer";
 const store = createStore(rootReducer, applyMiddleware(logger));
 
 ReactDOM.render(

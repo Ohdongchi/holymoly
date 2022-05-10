@@ -58,11 +58,30 @@ export class ChatService {
                 message: `${req.user.nickname}님이 ${room.roomName}방을 개설하셨습니다.`,
             });
 
-            console.log(client);
             return { message: "ok" };
         } else {
             throw new WsException("이미 존재하는 채팅룸입니다.");
         }
+    }
+
+    async joinChatRoom(client: Socket, payload: any, req: any): Promise<any> {
+        const rn = await Room.createQueryBuilder("room")
+            .select(["room.roomName"])
+            .where("room.id = :id", { id: payload.roomId })
+            .getOne();
+
+        if (rn) {
+            throw new WsException("방을 찾을 수 없습니다.");
+        }
+
+        client.join(rn.roomName);
+        client.to(rn.roomName).emit("joinChatRoom", {
+            userId: req.user.userId,
+            nickname: req.user.nickname,
+            message: `${req.user.nickname}님이 입장하셨습니다.`,
+        });
+
+        return { message: "ok" };
     }
 
     async deleteChatRoom(client: Socket, paylaod: WebsocketDeleteRoomDto, req: any): Promise<any> {
@@ -83,6 +102,25 @@ export class ChatService {
         } else {
             throw new WsException("존재하지 않는 채팅룸 입니다..");
         }
+    }
+    async exitChatRoom(client: Socket, payload: any, req: any): Promise<any> {
+        const rn = await Room.createQueryBuilder("room")
+            .select(["room.roomName"])
+            .where("room.id = :id", { id: payload.roomId })
+            .getOne();
+
+        if (rn) {
+            throw new WsException("방을 찾을 수 없습니다.");
+        }
+
+        client.leave(rn.roomName);
+        client.to(rn.roomName).emit("exitChatRoom", {
+            userId: req.user.userId,
+            nickname: req.user.nickname,
+            message: `${req.user.nickname}님이 떠나셨습니다.`,
+        });
+
+        return { message: "ok" };
     }
 
     async getAllChatRoomList(client: Socket, req: any): Promise<any> {
@@ -111,23 +149,29 @@ export class ChatService {
         ChatLog.useConnection(conn);
         Room.useConnection(conn);
 
-        const roomName = await Room.createQueryBuilder("room")
-            .select(["room.roomName as roomName"])
+        const rn = await Room.createQueryBuilder("room")
             .where("room.id = :roomId", { roomId: payload.roomId })
-            .getRawOne();
-        // await conn.transaction(async queryRunnerManager => {
-        //     let log = new ChatLog();
-        //     log.message = payload.message;
-        //     log.userId = req.user.id
-        //     log.roomId = payload.roomId;
-        //     await queryRunnerManager.save(log);
-        // });
+            .getOne();
 
-        client.to(roomName.roomName).emit("STCMessage", {
+        if (rn) {
+            throw new WsException("방을 찾을 수 없습니다.");
+        }
+
+        await conn.transaction(async queryRunnerManager => {
+            let log = new ChatLog();
+            log.message = payload.message;
+            log.userId = req.user.id
+            log.roomId = payload.roomId;
+            await queryRunnerManager.save(log);
+        });
+
+        client.to(rn.roomName).emit("STCMessage", {
             userId: req.user.userId,
             nickname: req.user.nickname,
             message: payload.message,
-        })
+        });
+
+        return { message: "ok" };
     }
 
 }
