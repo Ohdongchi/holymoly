@@ -5,18 +5,23 @@ import {
     MESSAGE_REQUEST,
     MESSAGE_RESPONSE,
     MESSAGE_ERROR
-} from "../../redux/SendMessageReducer";
-
+} from "../../redux/reducer/SendMessageReducer";
+import { io } from "socket.io-client";
 
 const SendMessageAPI = (payload) => {
-    return await axios.post(`ws://localhost:3003/chat`, payload);
+    console.log("saga asdasdas", payload);
+    let socket = io("ws://localhost:3003/chat");
+    socket.emit("createChatRoom", payload);
+    // socket.on("")
+    return 
 }
 
 function* sendSocketMessage({ payload }) {
     try {
         const { data } = yield call(SendMessageAPI, payload);
+        console.log(`saga {payload: ${payload}, data: ${data}}`);
         yield put({
-            type: MESSAGE_REQUEST,
+            type: MESSAGE_RESPONSE,
             payload: data,
         });
     } catch {

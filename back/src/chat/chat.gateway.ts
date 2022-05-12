@@ -34,7 +34,7 @@ export class ChatGateway
   // http api 로 돌려야함 ----
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage("createChatRoom")
-  async createChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: any, @Request() req: any): Promise<any> {
+  async createChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: WebSocketCreateRoomDto, @Request() req: any): Promise<any> {
     console.log("client", client);
     return await this.chatService.createChatRoom(client, payload, req);
   }

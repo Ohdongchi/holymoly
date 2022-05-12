@@ -1,29 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from 'axios';
 import { io } from "socket.io-client";
+import { useDispatch } from "react-redux";
 
+import { sendSocketMessageRequest } from "../../store/redux/reducer/SendMessageReducer";
 import "./chat.css";
 
 const ChattingBox = ({ value }) => {
     const [chatData, setChatData] = useState([]);
     const [chatText, setChatText] = useState("");
+    const dispatch = useDispatch();
 
     let socket = io("ws://localhost:3003/chat");
-    
+
     const onChangeChatTextHandler = (e) => {
         setChatText(e.target.value)
     }
 
     function finishedSocketEmit(e) {
-        console.log('finished emit');
-        console.log(e);
     }
 
     const onSubmitHandler = (e) => {
         const data = {
-            room: "room1",
-            msg: "room1에 연결합니다 !",
+            roomName: "room1",
+            personel: 30,
         };
+        // dispatch(sendSocketMessageRequest(data));
         socket.emit("createChatRoom", data);
         alert("실행");
     }
@@ -32,7 +34,7 @@ const ChattingBox = ({ value }) => {
 
             <div className="chatting-room">
                 {
-                    
+
                 }
             </div>
             <div className="chatting-panel-box">

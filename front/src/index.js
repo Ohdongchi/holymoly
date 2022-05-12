@@ -7,8 +7,18 @@ import { CookiesProvider } from "react-cookie";
 import { Provider } from "react-redux";
 import { applyMiddleware, createStore } from "redux";
 import { logger } from "redux-logger";
-import rootReducer from "./store/redux/RootReducer";
-const store = createStore(rootReducer, applyMiddleware(logger));
+import rootReducer from "./Component/store/redux/RootReducer";
+import createSagaMiddleWare from "redux-saga";
+import { composeWithDevTools } from "redux-devtools-extension";
+
+import RootSaga from "./Component/store/saga/RootSaga";
+import rootSaga from "./Component/store/saga/RootSaga";
+
+const sagaMiddleWare = createSagaMiddleWare();
+
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMiddleWare)));
+sagaMiddleWare.run(rootSaga);
+
 
 ReactDOM.render(
   <React.StrictMode>

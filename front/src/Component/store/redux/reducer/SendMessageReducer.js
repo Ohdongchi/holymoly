@@ -7,17 +7,34 @@ const initState = {
     error: "",
 }
 
-export const sendSocketMessageRequest = (e) => {
+export const sendSocketMessageRequest = (payload) => {
+    console.log("reducer", payload);
     return {
         type: MESSAGE_REQUEST,
+        payload
+    }
+}
+
+export const sendSocketMessageRESPONSE = (payload) => {
+    return {
+        type: MESSAGE_RESPONSE,
+        payload
+    }
+}
+export const sendSocketMessageError = (err) => {
+    return {
+        type: MESSAGE_ERROR,
+        error: err,
     }
 }
 
 const SendMessageReducer = (state = initState, action) => {
     switch (action.type) {
-        case MESSAGE_RESPONSE:
+        case MESSAGE_REQUEST:
+            console.log("req");
             return state;
         case MESSAGE_RESPONSE:
+            console.log("res");
             return {
                 ...state,
                 payload: action.payload,

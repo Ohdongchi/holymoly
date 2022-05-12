@@ -24,12 +24,12 @@ export class ChatService {
         Room.useConnection(conn);
         RoomMember.useConnection(conn);
         User.useConnection(conn);
-
+        console.log("create");
         const findRoom = await Room.createQueryBuilder("room")
             .where("room.roomName = :roomName", { roomName: roomName })
             .getOne();
 
-        if (!findRoom) {
+        if (!findRoom) {    
 
             const room = await conn.transaction(async (queryRunnerManager) => {
                 const newRoom = new Room();
