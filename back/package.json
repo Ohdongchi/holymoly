@@ -22,6 +22,7 @@
       "typeorm": "node --require ts-n                       ode/register ./node_modules/typeorm/cli.js"
    },
    "dependencies": {
+      "@nestjs-modules/mailer": "^1.6.1",
       "@nestjs/common": "^8.0.0",
       "@nestjs/config": "^1.2.0",
       "@nestjs/core": "^8.0.0",
@@ -33,6 +34,7 @@
       "@nestjs/swagger": "^5.2.0",
       "@nestjs/typeorm": "^8.0.3",
       "@nestjs/websockets": "^8.4.0",
+      "@types/multer": "^1.4.7",
       "@types/passport-jwt": "^3.0.6",
       "@types/passport-local": "^1.0.34",
       "@types/pg": "^8.6.5",
@@ -42,8 +44,10 @@
       "dayjs": "^1.11.1",
       "env": "0.0.2",
       "fs": "0.0.1-security",
+      "multer": "^1.4.4",
       "mysql": "^2.14.1",
       "mysql2": "^2.3.3",
+      "nodemailer": "^6.7.5",
       "passport": "^0.5.2",
       "passport-jwt": "^4.0.0",
       "passport-local": "^1.0.0",

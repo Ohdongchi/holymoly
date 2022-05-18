@@ -35,7 +35,6 @@ export class ChatGateway
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage("createChatRoom")
   async createChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: WebSocketCreateRoomDto, @Request() req: any): Promise<any> {
-    console.log("client", client);
     return await this.chatService.createChatRoom(client, payload, req);
   }
 
@@ -68,7 +67,7 @@ export class ChatGateway
 
   handleConnection(@ConnectedSocket() client: Socket) {
     console.log(`connected websocket ${new Date()}`);
-    // console.log(client);
+    // console.log(client)s;
     client.emit("hello", client.nsp.name);
   }
   // 연결 종료됐을 때

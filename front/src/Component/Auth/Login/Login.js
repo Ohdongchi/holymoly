@@ -27,22 +27,6 @@ const Login = ({ history }) => {
     }
   }, []);
 
-  useEffect(() => {
-
-    if (token) {
-      console.log(token);
-
-      window.localStorage.setItem("access_token", token.access_token);
-
-      setCookie("access_token", token.access_token, {
-        expires: new Date(token.expires),
-        path: "*",
-        httpOnly: false,
-        secure: true,
-      });
-    }
-  }, [token]);
-
   const onSubmit = (e) => {
     e.preventDefault();
     const submitObject = {

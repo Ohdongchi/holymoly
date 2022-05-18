@@ -1,4 +1,4 @@
-import { HttpException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, HttpException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import {
   Connection,
   getConnection,
@@ -6,12 +6,25 @@ import {
   TransactionManager,
 } from "typeorm";
 import * as bcrypt from "bcrypt";
+import * as dayjs from "dayjs";
+import "dayjs/locale/ko";
+import * as timezone from "dayjs/plugin/timezone";
+import * as utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+
+
 import { JwtAuthUser, LoginPayloadDto, RegisterPayloadDto } from "../Dto/auth.dto";
 import { User } from "./../models/User.entity";
 import { JwtService } from "@nestjs/jwt/dist/jwt.service";
+import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) { }
+  constructor(
+    private jwtService: JwtService,
+    private configService: ConfigService
+  ) { }
 
   async validateUser(email: string): Promise<any> {
     const conn = getConnection("waydn");
@@ -30,10 +43,11 @@ export class AuthService {
   async Register(payload: RegisterPayloadDto): Promise<any> {
     const conn = getConnection("waydn");
     User.useConnection(conn);
-
+    console.log(payload);
     const user = await User.createQueryBuilder("user")
       .where("user.email = :email", { email: payload.email })
       .getOne();
+    console.log(user);
     if (!user) {
       // save
       conn.transaction(async (queryRunnerManager) => {
@@ -58,23 +72,28 @@ export class AuthService {
       .where("user.email =:email", { email: payload.email })
       .getOne();
 
-    const passCompare = await bcrypt.compare(payload.password, user.password);
 
+    const passCompare = await bcrypt.compare(payload.password, user.password);
 
     if (!user) {
       throw new NotFoundException("찾을 수 없는 사용자입니다.");
-    }
-
-    const data: JwtAuthUser = {
-      userId: user.id,
-      email: user.email,
-      nickname: user.nickname,
-      birthDay: user.birthDay,
-      image: user.profileImage,
-    }
-
-    return {
-      access_token: this.jwtService.sign(data),
+    } else {
+      if (!passCompare) {
+        throw new BadRequestException("비밀번호가 잘못됐습니다.")
+      }
+      const data: JwtAuthUser = {
+        id: user.id,
+        email: user.email,
+        nickname: user.nickname,
+        birthDay: user.birthDay,
+        image: user.profileImage,
+      }
+      const expiresDate = dayjs().tz("Asia/Seoul").add(60, "minute").add(9, "hour"); // utc라 kst 할려면 9시간 추가하고 토큰 시간 60분이라 60분 추가
+      
+      return {
+        access_token: this.jwtService.sign(data),
+        expires: expiresDate
+      }
     }
   }
 }

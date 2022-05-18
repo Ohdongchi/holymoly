@@ -24,23 +24,23 @@ export class ChatService {
         Room.useConnection(conn);
         RoomMember.useConnection(conn);
         User.useConnection(conn);
-        console.log("create");
+
         const findRoom = await Room.createQueryBuilder("room")
             .where("room.roomName = :roomName", { roomName: roomName })
             .getOne();
 
-        if (!findRoom) {    
+        if (!findRoom) {
 
             const room = await conn.transaction(async (queryRunnerManager) => {
                 const newRoom = new Room();
-                newRoom.host = req.user.userId;
+                newRoom.host = req.user.id;
                 newRoom.roomName = roomName;
                 newRoom.personel = personel;
                 return await queryRunnerManager.save(newRoom);
             });
 
             const user = await User.createQueryBuilder("user")
-                .where("user.id =:id", { id: req.user.userId })
+                .where("user.id =:id", { id: req.user.id })
                 .getOne();
 
             conn.transaction(async queryRunnerManager => {
@@ -53,14 +53,18 @@ export class ChatService {
             client.data.roomName = room.roomName;
             client.join(room.roomName);
             client.to(room.roomName).emit("STCCreateRoom", {
-                userId: req.user.userId,
+                id: req.user.id,
                 nickname: req.user.nickname,
                 message: `${req.user.nickname}님이 ${room.roomName}방을 개설하셨습니다.`,
             });
 
             return { message: "ok" };
         } else {
-            throw new WsException("이미 존재하는 채팅룸입니다.");
+            console.log("실패");
+            client.emit("error", {
+                error: "이미 존재하는 채팅방 입니다.",
+            })
+            return { message: "failed" };
         }
     }
 
@@ -76,7 +80,7 @@ export class ChatService {
 
         client.join(rn.roomName);
         client.to(rn.roomName).emit("joinChatRoom", {
-            userId: req.user.userId,
+            id: req.user.id,
             nickname: req.user.nickname,
             message: `${req.user.nickname}님이 입장하셨습니다.`,
         });
@@ -93,7 +97,7 @@ export class ChatService {
             .where("room.roomName = :roomName", { roomName: roomName })
             .getOne();
 
-        if (findRoom && req.user.userId === findRoom.host) {
+        if (findRoom && req.user.id === findRoom.host) {
             findRoom.deletedAt = new Date();
             conn.transaction(async (queryRunnerManager) => {
                 await queryRunnerManager.save(findRoom);
@@ -115,7 +119,7 @@ export class ChatService {
 
         client.leave(rn.roomName);
         client.to(rn.roomName).emit("exitChatRoom", {
-            userId: req.user.userId,
+            id: req.user.id,
             nickname: req.user.nickname,
             message: `${req.user.nickname}님이 떠나셨습니다.`,
         });
@@ -160,13 +164,13 @@ export class ChatService {
         await conn.transaction(async queryRunnerManager => {
             let log = new ChatLog();
             log.message = payload.message;
-            log.userId = req.user.id
+            log.id = req.user.id
             log.roomId = payload.roomId;
             await queryRunnerManager.save(log);
         });
 
         client.to(rn.roomName).emit("STCMessage", {
-            userId: req.user.userId,
+            id: req.user.id,
             nickname: req.user.nickname,
             message: payload.message,
         });

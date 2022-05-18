@@ -25,6 +25,7 @@ export class AuthController {
     @Request() req: any,
     @Body() payload: LoginPayloadDto
   ): Promise<any> {
+    console.log(payload);
     return await this.authService.Login(payload);
   }
 

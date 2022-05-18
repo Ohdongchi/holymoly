@@ -17,6 +17,9 @@ import { UserModule } from './user/user.module';
 import { ModelsModule } from './models/models.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
+import { UploadController } from './upload/upload.controller';
+import { UploadService } from './upload/upload.service';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -51,8 +54,9 @@ import { AuthModule } from './auth/auth.module';
     ChatModule, // gateway
     UserModule,
     AuthModule,
+    UploadModule,
   ],
-  controllers: [AppController, AuthController],
-  providers: [AppService],
+  controllers: [AppController, AuthController, UploadController],
+  providers: [AppService, UploadService],
 })
 export class AppModule {}

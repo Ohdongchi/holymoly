@@ -8,6 +8,8 @@ import {
   IsDate,
   IsOptional,
 } from "class-validator";
+import * as dayjs from "dayjs";
+
 
 export class RegisterPayloadDto {
   @ApiProperty({
@@ -26,13 +28,17 @@ export class RegisterPayloadDto {
 
   @ApiProperty({
     type: "string",
+    default:"알수없음"
   })
   @IsDefined()
   @IsString()
   nickname: string;
 
-  @ApiProperty()
-  @IsDefined()
+  @ApiPropertyOptional({
+    type: "date",
+    default: dayjs().date()
+  })
+  @IsOptional()
   @IsDate()
   birthDay: Date;
 
@@ -68,7 +74,7 @@ export class JwtAuthUser {
   @ApiProperty()
   @IsNumber()
   @IsDefined()
-  userId: number;
+  id: number;
 
   @ApiProperty()
   @IsString()

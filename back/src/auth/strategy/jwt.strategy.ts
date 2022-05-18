@@ -10,8 +10,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private configService: ConfigService,
   ) {
     super({
-      jwtFromRequest: req => {
-        return req.handshake ? req.handshake.headers.access_token : req.headers.access_token;
+      jwtFromRequest: (req: any) => {
+        // req 구조를 보고 access_token이 어딨는지 파악해야함
+        // postman: req.handshake.headers.access_token
+        // react: req.handshake.auth.access_token
+        // http: req.headers.access_token
+        return req.handshake ? req.handshake.auth.access_token : req.headers.access_token;
       },
       ignoreExpiration: false,
       secretOrKey: configService.get<string>("JWT_SECRET_KEY"),
