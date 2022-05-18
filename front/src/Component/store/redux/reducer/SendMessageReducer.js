@@ -15,18 +15,18 @@ export const sendSocketMessageRequest = (payload) => {
     }
 }
 
-export const sendSocketMessageRESPONSE = (payload) => {
-    return {
-        type: MESSAGE_RESPONSE,
-        payload
-    }
-}
-export const sendSocketMessageError = (err) => {
-    return {
-        type: MESSAGE_ERROR,
-        error: err,
-    }
-}
+// export const sendSocketMessageRESPONSE = (payload) => {
+//     return {
+//         type: MESSAGE_RESPONSE,
+//         payload
+//     }
+// }
+// export const sendSocketMessageError = (err) => {
+//     return {
+//         type: MESSAGE_ERROR,
+//         error: err,
+//     }
+// }
 
 const SendMessageReducer = (state = initState, action) => {
     switch (action.type) {

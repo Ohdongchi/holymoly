@@ -1,6 +1,7 @@
 import { all, fork, takeEvery, call, put } from "@redux-saga/core/effects";
 import axios from "axios";
 
+// Action type
 import {
     MESSAGE_REQUEST,
     MESSAGE_RESPONSE,
@@ -13,7 +14,7 @@ const SendMessageAPI = (payload) => {
     let socket = io("ws://localhost:3003/chat");
     socket.emit("createChatRoom", payload);
     // socket.on("")
-    return 
+    return
 }
 
 function* sendSocketMessage({ payload }) {

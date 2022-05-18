@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import axios from "axios";
 
 // Component
 import Home from "./Home/Home";
 import SideBar from "./Side/SideBar";
+import Login from "./Auth/Login/Login";
+import Register from "./Auth/Register/Register";
 
 // Public
 import "./App.css";
 import "./Home/home.css";
 import "./Side/sideBar.css";
-import axios from "axios";
+import "./Auth/Register/Register.css";
 
 function App() {
   const [sideData, setSideData] = useState([]);
@@ -17,9 +20,9 @@ function App() {
   const [isShow, setIsShow] = useState(false);
 
   const changeIsShowBool = (e) => {
-    console.log(e.target);
-    if (e.target.className === "side-container" || e.target.className === "side-exit-icon" || e.target.className === "hide-side-button")
+    if (e.target.className === "side-container" || e.target.className === "side-exit-icon" || e.target.className === "hide-side-button") {
       isShow ? setIsShow(false) : setIsShow(true);
+    }
   }
 
   // useEffect(() => {
@@ -31,7 +34,9 @@ function App() {
       <h2 className="main-header">Main</h2>
       <SideBar isShow={isShow} changeIsShowBool={changeIsShowBool} userData={userData} sideData={sideData} />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" exact element={<Home />} />
+        <Route path="/auth/login" exact element={<Login />} />
+        <Route path="/auth/register" exact element={<Register />} />
       </Routes>
     </>
   );

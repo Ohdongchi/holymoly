@@ -11,8 +11,7 @@ const ChattingBox = ({ value }) => {
     const [chatText, setChatText] = useState("");
     const dispatch = useDispatch();
 
-    let socket = io("ws://localhost:3003/chat");
-
+    
     const onChangeChatTextHandler = (e) => {
         setChatText(e.target.value)
     }
@@ -21,6 +20,8 @@ const ChattingBox = ({ value }) => {
     }
 
     const onSubmitHandler = (e) => {
+        let socket = io("ws://localhost:3003/chat");
+
         const data = {
             roomName: "room1",
             personel: 30,

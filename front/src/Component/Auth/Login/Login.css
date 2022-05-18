@@ -23,10 +23,10 @@
 .Login-container > .Login-form > label {
   font-weight: bold;
 }
-.Login-container > .Login-form > .password-division {
+.division {
   position: relative;
 }
-.Login-container > .Login-form > .password-division > * {
+.division > * {
   display: block;
   position: relative;
   width: 100%;
@@ -37,7 +37,11 @@
   align-items: center;
   align-content: center;
 }
-.Login-container > .Login-form > .password-division > input[type="checkbox"] {
+.division > input:first-child {
+  padding: 5px 8px;
+  font-weight: 500;
+}
+.division > input[type="checkbox"] {
   display: inline-block;
   position: absolute;
   width: 20px;
