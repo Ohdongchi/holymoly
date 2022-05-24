@@ -10,23 +10,21 @@ import SideBar from "./Side/SideBar";
 import Login from "./Auth/Login/Login";
 import Register from "./Auth/Register/Register";
 
+
+import ReactModal from "react-modal";
 // Public
 import "./App.css";
-import "./Home/home.css";
-import "./Side/sideBar.css";
-import "./Auth/Register/Register.css";
+import CustomModal from "./modal/CustomModal";
 
-function App() {
+function App({ history }) {
   const [sideData, setSideData] = useState([]);
   const [userData, setUserData] = useState([]);
-  const [isShow, setIsShow] = useState(false);
+
   const [cookie, setCookie, removeCookie] = useCookies(["access_token"]);
+
   const token = useSelector(state => state.LoginReducer.payload);
-  const changeIsShowBool = (e) => {
-    if (e.target.className === "side-container" || e.target.className === "side-exit-icon" || e.target.className === "hide-side-button") {
-      isShow ? setIsShow(false) : setIsShow(true);
-    }
-  }
+
+  // console.log(isOpen)
 
   useEffect(() => {
     if (token) {
@@ -47,10 +45,10 @@ function App() {
   return (
     <>
       <h2 className="main-header"><Link to="/">Main</Link></h2>
-      <SideBar isShow={isShow} changeIsShowBool={changeIsShowBool} userData={userData} sideData={sideData} />
+      <SideBar userData={userData} sideData={sideData} />
       <Routes>
         <Route path="/" exact element={<Home />} />
-        <Route path="/auth/login" exact element={<Login />} />
+        <Route path="/auth/login" exact element={<Login history={history} />} />
         <Route path="/auth/register" exact element={<Register />} />
       </Routes>
     </>

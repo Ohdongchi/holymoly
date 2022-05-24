@@ -28,10 +28,10 @@ export class Room extends BaseEntity {
   })
   roomName: string;
 
-  @Column({
-    type: "bigint",
-  })
-  host: number;
+  // @Column({
+  //   type: "bigint",
+  // })
+  // host: number;
 
   @Column({
     type: "int",
@@ -47,9 +47,9 @@ export class Room extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.id)
-  @JoinColumn({ name: "host" })
-  user: User;
+  // @ManyToOne(() => User, (user) => user.id)
+  // @JoinColumn({ name: "host" })
+  // user: User;
 
   @OneToMany(() => RoomHashTag, (roomHashTag) => roomHashTag.room)
   hashTag: RoomHashTag[];

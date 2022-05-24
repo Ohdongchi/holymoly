@@ -21,7 +21,6 @@ export const categoryResponse = (payload) => {
 };
 
 export const categoryError = (err) => {
-  console.error(err);
   return {
     type: CATEGORY_ERROR,
   };

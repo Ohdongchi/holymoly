@@ -15,7 +15,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         // postman: req.handshake.headers.access_token
         // react: req.handshake.auth.access_token
         // http: req.headers.access_token
-        return req.handshake ? req.handshake.auth.access_token : req.headers.access_token;
+        if (req.handshake) {
+          return req.handshake.auth.access_token ? req.handshake.auth.access_token : req.handshake.headers.access_token
+        } else {
+          req.headers.access_token
+        }
+
+        // return req.handshake ? req.handshake.auth.access_token : req.headers.access_token;
       },
       ignoreExpiration: false,
       secretOrKey: configService.get<string>("JWT_SECRET_KEY"),

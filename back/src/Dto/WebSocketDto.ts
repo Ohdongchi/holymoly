@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsDecimal, IsDefined, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsDecimal, IsDefined, IsNumber, IsOptional, IsString } from "class-validator";
 
-export class WebSocketCreateRoomDto {
+export class CreateRoomDto {
   @ApiProperty()
   @IsDefined()
   @IsString()
@@ -14,15 +14,22 @@ export class WebSocketCreateRoomDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
-  hashTag: string;
+  @IsArray()
+  hashTag: Array<string>;
 }
 
-export class WebsocketDeleteRoomDto {
+export class DeleteRoomDto {
   @ApiProperty()
   @IsDefined()
-  @IsString()
-  roomName: string;
+  @IsNumber()
+  roomId: number;
+}
+
+export class JoinRoomDto {
+  @ApiProperty()
+  @IsDefined()
+  @IsNumber()
+  roomId: number;
 }
 
 export class SendMessageDto {

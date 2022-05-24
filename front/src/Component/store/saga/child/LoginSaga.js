@@ -5,7 +5,7 @@ import axios from "axios";
 // Action type
 import {
     LOGIN_REQUEST, LOGIN_RESPONSE, LOGIN_ERROR
-} from "../../redux/reducer/LoginReducer";
+} from "../../redux/reducer/Login.reducer";
 
 const LoginAPI = async (payload) => {
     return await axios.post("http://localhost:3002/auth/Login", payload);

@@ -51,8 +51,8 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Room, (room) => room.user)
-  room: Room[];
+  // @OneToMany(() => Room, (room) => room.user)
+  // room: Room[];
 
   @OneToMany(() => UserRole, (userRole) => userRole.user)
   role: UserRole[];

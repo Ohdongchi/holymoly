@@ -6,21 +6,28 @@ import {
     MESSAGE_REQUEST,
     MESSAGE_RESPONSE,
     MESSAGE_ERROR
-} from "../../redux/reducer/SendMessageReducer";
+} from "../../redux/reducer/SendMessage.reducer";
 import { io } from "socket.io-client";
+import { useCookies } from "react-cookie";
 
-const SendMessageAPI = (payload) => {
-    console.log("saga asdasdas", payload);
-    let socket = io("ws://localhost:3003/chat");
-    socket.emit("createChatRoom", payload);
-    // socket.on("")
-    return
+const SendMessageAPI = (req) => {
+
+    let socket = io("ws://localhost:3003/chat"); 
+    const data = {
+        roomName: "room2",
+        personel: 50,
+        hashTag: [
+            "trip"
+        ]
+    }
+    socket.emit("createChatRoom", data);
+    return 
 }
 
-function* sendSocketMessage({ payload }) {
+function* sendSocketMessage(req) {
     try {
-        const { data } = yield call(SendMessageAPI, payload);
-        console.log(`saga {payload: ${payload}, data: ${data}}`);
+        const { data } = yield call(SendMessageAPI, req);
+
         yield put({
             type: MESSAGE_RESPONSE,
             payload: data,

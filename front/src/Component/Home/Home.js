@@ -16,7 +16,7 @@ const Home = () => {
       <div>
         <ChattingBox />
       </div>
-
+      
     </div>
   );
 };

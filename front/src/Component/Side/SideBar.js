@@ -1,29 +1,39 @@
 // module
 import React, { useEffect, useCallback, useState, useMemo } from "react";
 import axios from "axios";
-import { Link, history } from "react-router-dom";
+import { Link, history, useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 // component
 import CategoryList from "./categoryList";
 import SideProfile from "./SideProfile";
-import { useCookies } from "react-cookie";
-
+import SocketMenuComponent from "../Socket/SocketMenu";
 
 // public
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleArrowRight } from "@fortawesome/free-solid-svg-icons";
+import "./sideBar.css";
 
 import sideBarButton from "./image/sideBarButton.png";
 import hideSidebutton from "./image/hide-side-button.png";
 
 
-const SideBar = ({ isShow, changeIsShowBool, userData, sideData, history }) => {
+
+const SideBar = ({ userData, sideData }) => {
 
   const [cookie, setCookie, removeCookie] = useCookies();
+  const [isShow, setIsShow] = useState(false);
+  let history = useNavigate();
 
   const LogoutHandler = (e) => {
-    console.log(history);
+
     removeCookie("access_token");
+  }
+
+  const changeIsShowBool = (e) => {
+    if (e.target.className === "side-container" || e.target.className === "side-exit-icon" || e.target.className === "hide-side-button") {
+      isShow ? setIsShow(false) : setIsShow(true);
+    }
   }
 
   return (
@@ -54,6 +64,7 @@ const SideBar = ({ isShow, changeIsShowBool, userData, sideData, history }) => {
                 }
               </div>
               <SideProfile user={userData} />
+              <SocketMenuComponent />
               <CategoryList data={sideData} />
               <img src={sideBarButton} className="side-exit-icon" />
             </div>

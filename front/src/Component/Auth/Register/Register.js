@@ -2,6 +2,13 @@ import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import dayjs from "dayjs";
+
+
+// public
+import "./Register.css";
+
+
+
 const RegisterComponent = () => {
   const [value, setValue] = useState({
     email: "",
@@ -58,11 +65,11 @@ const RegisterComponent = () => {
         </div>
         <div>
           <label htmlFor="Password">Password</label>
-          <input type="password" id="Password" onChange={onChangePassword} value={value.password} />
+          <input type="password" id="Password" onChange={onChangePassword} autoComplete="on" value={value.password} />
         </div>
         <div>
           <label htmlFor="Nickname">Nickname</label>
-          <input type="text" id="Nickname" onChange={onChangeNickName} value={value.nickName} />
+          <input type="text" id="Nickname" onChange={onChangeNickName} value={value.nickname} />
         </div>
         <div>
           <label htmlFor="BirthDay">Birth day</label>

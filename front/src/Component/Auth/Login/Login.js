@@ -3,18 +3,19 @@ import axios from "axios";
 
 import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequest } from "../../store/redux/reducer/LoginReducer";
-
+import { loginRequest } from "../../store/redux/reducer/Login.reducer";
+import { useNavigate } from "react-router-dom";
 
 // public
 import "./Login.css";
 
-const Login = ({ history }) => {
+const Login = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [cookie, setCookie, removeCookie] = useCookies(["access_token"]);
   const [saveChecked, setSaveChecked] = useState(false);
+  let history = useNavigate();
 
   const token = useSelector(state => state.LoginReducer.payload);
   // httpOnly = css(cross site scripting) 공격 막힘
@@ -34,6 +35,7 @@ const Login = ({ history }) => {
       password: `${password}`,
     };
     dispatch(loginRequest(submitObject));
+    history("/");
     return false;
   };
 
@@ -81,6 +83,7 @@ const Login = ({ history }) => {
               id={"password"}
               onChange={onChangePassword}
               required
+              autoComplete="on"
             />
             <input type="checkbox" onChange={changePasswordType} />
           </div>

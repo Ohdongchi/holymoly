@@ -10,7 +10,7 @@ import {
 } from "@nestjs/websockets";
 import { Header, Headers, Logger, Request, UseGuards } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
-import { SendMessageDto, WebSocketCreateRoomDto } from "src/Dto/WebSocketDto";
+import { SendMessageDto, CreateRoomDto, DeleteRoomDto } from "src/Dto/WebSocketDto";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 import { ChatService } from "./chat.service";
 
@@ -34,14 +34,21 @@ export class ChatGateway
   // http api 로 돌려야함 ----
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage("createChatRoom")
-  async createChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: WebSocketCreateRoomDto, @Request() req: any): Promise<any> {
+  async createChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: CreateRoomDto, @Request() req: any): Promise<any> {
+    // console.log(payload);
     return await this.chatService.createChatRoom(client, payload, req);
   }
 
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage("deleteChatRoom")
-  async deleteChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: any, @Request() req: any): Promise<any> {
+  async deleteChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: DeleteRoomDto, @Request() req: any): Promise<any> {
     return await this.chatService.deleteChatRoom(client, payload, req);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @SubscribeMessage("joinChatRoom")
+  async joinChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: DeleteRoomDto, @Request() req: any): Promise<any> {
+    return await this.chatService.joinChatRoom(client, payload, req);
   }
 
   @UseGuards(JwtAuthGuard)

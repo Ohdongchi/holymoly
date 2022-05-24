@@ -3,7 +3,7 @@ import { Socket } from 'socket.io';
 import { Room } from 'src/models/Room.entity';
 import { getConnection } from 'typeorm';
 import { v4 as uuidv4 } from "uuid";
-import { SendMessageDto, WebSocketCreateRoomDto, WebsocketDeleteRoomDto } from '../Dto/WebSocketDto';
+import { SendMessageDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto } from '../Dto/WebSocketDto';
 
 
 import * as dayjs from "dayjs";
@@ -11,6 +11,8 @@ import { ChatLog } from 'src/models/ChatLog.entity';
 import { RoomMember } from 'src/models/Neutrality/RoomMember.entity';
 import { User } from 'src/models/User.entity';
 import { WsException } from '@nestjs/websockets';
+import { RoomHashTag } from 'src/models/Neutrality/RoomHashTag.entity';
+import { query } from 'express';
 
 @Injectable()
 export class ChatService {
@@ -18,7 +20,7 @@ export class ChatService {
     constructor() {
     }
 
-    async createChatRoom(client: Socket, payload: WebSocketCreateRoomDto, req: any): Promise<any> {
+    async createChatRoom(client: Socket, payload: CreateRoomDto, req: any): Promise<any> {
         const { roomName, personel, hashTag } = payload;
         const conn = getConnection("waydn");
         Room.useConnection(conn);
@@ -27,13 +29,13 @@ export class ChatService {
 
         const findRoom = await Room.createQueryBuilder("room")
             .where("room.roomName = :roomName", { roomName: roomName })
+            .leftJoin("room.roomMember", "roomMember.room")
             .getOne();
-
+        console.log(findRoom);
         if (!findRoom) {
 
             const room = await conn.transaction(async (queryRunnerManager) => {
                 const newRoom = new Room();
-                newRoom.host = req.user.id;
                 newRoom.roomName = roomName;
                 newRoom.personel = personel;
                 return await queryRunnerManager.save(newRoom);
@@ -47,7 +49,12 @@ export class ChatService {
                 const newMember = new RoomMember();
                 newMember.user = user;
                 newMember.room = room;
+                newMember.hostId = user.id;
                 await queryRunnerManager.save(newMember);
+            });
+
+            payload.hashTag.forEach(res => {
+
             });
 
             client.data.roomName = room.roomName;
@@ -68,36 +75,58 @@ export class ChatService {
         }
     }
 
-    async joinChatRoom(client: Socket, payload: any, req: any): Promise<any> {
-        const rn = await Room.createQueryBuilder("room")
-            .select(["room.roomName"])
-            .where("room.id = :id", { id: payload.roomId })
+    async joinChatRoom(client: Socket, payload: JoinRoomDto, req: any): Promise<any> {
+
+        const conn = getConnection("waydn");
+        Room.useConnection(conn);
+        RoomMember.useConnection(conn);
+        const findRoom = await Room.createQueryBuilder("room")
+            .where("room.id = :id", { id: payload[0].roomId })
             .getOne();
 
-        if (rn) {
+        console.log("findRoom", findRoom);
+
+        if (!findRoom) {
             throw new WsException("방을 찾을 수 없습니다.");
         }
 
-        client.join(rn.roomName);
-        client.to(rn.roomName).emit("joinChatRoom", {
-            id: req.user.id,
-            nickname: req.user.nickname,
-            message: `${req.user.nickname}님이 입장하셨습니다.`,
-        });
+        if (findRoom) {
+            const insert = conn.transaction(async queryRunnerManager => {
+                const newMember = new RoomMember();
+                const newRoom = new Room();
+                console.log(newRoom);
+                newMember.user = req.user;
+                newMember.room = findRoom;
+                return await queryRunnerManager.save(newMember);
+            });
 
-        return { message: "ok" };
+            console.log(insert);
+
+            client.join(findRoom.roomName);
+            client.to(findRoom.roomName).emit("joinChatRoom", {
+                id: req.user.id,
+                nickname: req.user.nickname,
+                message: `${req.user.nickname}님이 입장하셨습니다.`,
+            });
+            return { message: "ok" };
+        }
+
+        return { message: "failed" };
     }
 
-    async deleteChatRoom(client: Socket, paylaod: WebsocketDeleteRoomDto, req: any): Promise<any> {
-        const { roomName } = paylaod;
+    async deleteChatRoom(client: Socket, paylaod: DeleteRoomDto, req: any): Promise<any> {
+        const { roomId } = paylaod;
         const conn = getConnection("waydn");
         Room.useConnection(conn);
+        RoomHashTag.useConnection(conn);
 
         const findRoom = await Room.createQueryBuilder("room")
-            .where("room.roomName = :roomName", { roomName: roomName })
+            .leftJoinAndSelect("room.roomMember", "roomMember")
+            .where("room.id = :roomId", { roomId })
+            .andWhere("roomMember.hostId = :id", { id: req.user.id })
             .getOne();
 
-        if (findRoom && req.user.id === findRoom.host) {
+        if (findRoom && req.user.id === findRoom.roomMember[0].hostId) {
             findRoom.deletedAt = new Date();
             conn.transaction(async (queryRunnerManager) => {
                 await queryRunnerManager.save(findRoom);

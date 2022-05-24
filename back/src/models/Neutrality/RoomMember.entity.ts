@@ -27,4 +27,10 @@ export class RoomMember extends BaseEntity {
 
   @ManyToOne(() => Room, (room) => room.roomMember)
   room: Room;
+
+  @Column({
+    type: "int",
+    nullable: true,
+  })
+  hostId: number;
 }

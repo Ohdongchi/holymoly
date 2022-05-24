@@ -7,11 +7,14 @@ const initState = {
     error: "",
 }
 
-export const sendSocketMessageRequest = (payload) => {
-    console.log("reducer", payload);
+export const sendSocketMessageRequest = (ev, payload, token) => {
+    console.log("ev", ev);
+    console.log("payload", payload);
     return {
         type: MESSAGE_REQUEST,
-        payload
+        payload,
+        ev,
+        token,
     }
 }
 

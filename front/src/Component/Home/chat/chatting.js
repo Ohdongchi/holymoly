@@ -4,14 +4,15 @@ import { io } from "socket.io-client";
 import { useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
 
-import { sendSocketMessageRequest } from "../../store/redux/reducer/SendMessageReducer";
+import { sendSocketMessageRequest } from "../../store/redux/reducer/SendMessage.reducer";
 import "./chat.css";
 
 const ChattingBox = ({ value }) => {
     const [chatData, setChatData] = useState([]);
     const [chatText, setChatText] = useState("");
-    const [cookie, setCookie, removeCookie] = useCookies();
     const dispatch = useDispatch();
+    
+    const [cookie, setCookie, removeCookie] = useCookies();
 
 
     // 생각해봤을 때 유저당 한개의 소켓을 가지고 있어야,
@@ -27,9 +28,9 @@ const ChattingBox = ({ value }) => {
 
     useEffect(() => {
         socket.on("error", (res) => {
-            alert(res.error)  
+            alert(res.error)
         });
-    }, [])
+    }, []);
 
     const onChangeChatTextHandler = (e) => {
         setChatText(e.target.value)
@@ -50,7 +51,6 @@ const ChattingBox = ({ value }) => {
         socket.emit("createChatRoom", data);
 
         alert("실행 1");
-
     }
     return (
         <div className="chatting-container">

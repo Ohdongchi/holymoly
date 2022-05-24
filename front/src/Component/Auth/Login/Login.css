@@ -56,7 +56,7 @@
 
 .Login-container > .Login-form > input[type="submit"] {
   font-weight: bold;
-  border: 1px dashed black;
+  border: 1px solid black;
   box-sizing: border-box;
   background-color: rgba(125, 218, 255, 0.781);
 }
