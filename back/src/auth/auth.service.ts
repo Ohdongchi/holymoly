@@ -36,18 +36,18 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException("사용자를 찾을 수 없습니다.");
     }
-    console.log("validate", user);
+  
     return user;
   }
 
   async Register(payload: RegisterPayloadDto): Promise<any> {
     const conn = getConnection("waydn");
     User.useConnection(conn);
-    console.log(payload);
+    
     const user = await User.createQueryBuilder("user")
       .where("user.email = :email", { email: payload.email })
       .getOne();
-    console.log(user);
+    
     if (!user) {
       // save
       conn.transaction(async (queryRunnerManager) => {
@@ -72,12 +72,10 @@ export class AuthService {
       .where("user.email =:email", { email: payload.email })
       .getOne();
 
-
-    const passCompare = await bcrypt.compare(payload.password, user.password);
-
     if (!user) {
       throw new NotFoundException("찾을 수 없는 사용자입니다.");
     } else {
+      const passCompare = await bcrypt.compare(payload.password, user.password);
       if (!passCompare) {
         throw new BadRequestException("비밀번호가 잘못됐습니다.")
       }
@@ -96,4 +94,21 @@ export class AuthService {
       }
     }
   }
+
+  async verify(token: string) {
+    const user = await this.jwtService.verify(token);
+    console.log("auth Service", user);
+    if (!user) {
+      throw new UnauthorizedException("만료된 토큰");
+    } else {
+      return {
+        id: user.id,
+        email: user.email,
+        nickname: user.nickname,
+        birthDay: user.birthDay,
+        image: user.image
+      };
+    }
+  }
+
 }

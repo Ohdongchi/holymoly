@@ -10,7 +10,7 @@ import {
 } from "@nestjs/websockets";
 import { Header, Headers, Logger, Request, UseGuards } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
-import { SendMessageDto, CreateRoomDto, DeleteRoomDto } from "src/Dto/WebSocketDto";
+import { SendMessageDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto } from "src/Dto/WebSocketDto";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 import { ChatService } from "./chat.service";
 
@@ -47,12 +47,12 @@ export class ChatGateway
 
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage("joinChatRoom")
-  async joinChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: DeleteRoomDto, @Request() req: any): Promise<any> {
+  async joinChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: JoinRoomDto, @Request() req: any): Promise<any> {
     return await this.chatService.joinChatRoom(client, payload, req);
   }
 
   @UseGuards(JwtAuthGuard)
-  @SubscribeMessage("getAllChatRoomList")
+  @SubscribeMessage("CgetAllChatRoomList")
   async getAllChatRoomList(@ConnectedSocket() client: Socket, @Request() req: any): Promise<any> {
     return await this.chatService.getAllChatRoomList(client, req);
   }

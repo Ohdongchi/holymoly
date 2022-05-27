@@ -14,7 +14,7 @@ const LoginAPI = async (payload) => {
 function* postLoginAPI({ payload }) {
     try {
         const { data } = yield call(LoginAPI, payload);
-        console.log("로그인 사가 ");
+        // console.log("로그인 사가 ");
         yield put({
             type: LOGIN_RESPONSE,
             payload: data,

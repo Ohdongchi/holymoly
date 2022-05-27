@@ -47,10 +47,13 @@ const SocketMenuComponent = () => {
   });
 
   const addHashTag = (e) => {
+    let reg = /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/ ]/gim;
     if (hashTagRef.current.value !== undefined && hashTagRef.current.value !== "") {
+      const hashtags = hashTagRef.current.value.trim().replace(reg, " ").split(" ");
+      console.log(hashTagRef);
       setFormData({
         ...formData,
-        hashTag: formData.hashTag.concat(hashTagRef.current.value),
+        hashTag: formData.hashTag.concat([...new Set(hashtags)]),
       });
       hashTagRef.current.value = "";
     }
@@ -59,7 +62,7 @@ const SocketMenuComponent = () => {
   const onSubmitHandler = (e) => {
     e.preventDefault();
 
-    let socket = io.connect("http://localhost:3003/chat", {
+    let socket = io("http://localhost:3003/chat", {
       auth: {
         access_token: cookie.access_token,
       }
@@ -93,7 +96,7 @@ const SocketMenuComponent = () => {
                   </div>
                   <div>
                     <label htmlFor="roomName">정원 수</label>
-                    <input type="text" id="roomName" placeholder="정원 수" onChange={onChangePersonel} />
+                    <input type="number" id="roomName" placeholder="정원 수" onChange={onChangePersonel} />
                   </div>
                   <div>
                     <label htmlFor="roomName">해시태그</label>

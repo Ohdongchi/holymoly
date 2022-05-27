@@ -5,8 +5,9 @@ import {
   Put,
   Delete,
   UseGuards,
-  Request,
   Body,
+  Req,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LoginPayloadDto, RegisterPayloadDto } from "../Dto/auth.dto";
@@ -15,14 +16,20 @@ import { AuthGuard } from "@nestjs/passport";
 import * as bcrypt from "bcrypt";
 import { LocalAuthGuard, } from "./guard/local-auth.guard";
 import { JwtAuthGuard } from "./guard/jwt-auth.guard";
+import { Request } from "express";
+import { JwtService } from "@nestjs/jwt";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(
+    // private jwtService: JwtService,
+    private authService: AuthService,
+
+  ) { }
 
   @Post("/login")
   async Login(
-    @Request() req: any,
+    @Req() req: Request,
     @Body() payload: LoginPayloadDto
   ): Promise<any> {
     console.log(payload);
@@ -31,16 +38,23 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post("test")
-  async test(@Request() req: any): Promise<any> {
+  async test(@Req() req: Request): Promise<any> {
     console.log(req.user);
-    return {message: "ok"};
+    return { message: "ok" };
   }
 
   @Post("/register")
   async Register(
-    @Request() req: any,
+    @Req() req: Request,
     @Body() payload: RegisterPayloadDto
   ): Promise<any> {
     return await this.authService.Register(payload);
+  }
+
+
+  // @UseGuards(JwtAuthGuard)
+  @Post("/verify")
+  async verify(@Req() req: any) {
+    return await this.authService.verify(req.headers?.access_token);
   }
 }

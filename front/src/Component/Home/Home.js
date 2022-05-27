@@ -5,7 +5,7 @@ import axios from "axios";
 
 // component
 import Login from "../Auth/Login/Login";
-import ChattingBox from "./chat/chatting"
+import ChattingBox from "./chat/Chatting"
 // public
 import "./home.css";
 
@@ -14,7 +14,8 @@ const Home = () => {
   return (
     <div className="home">
       <div>
-        <ChattingBox />
+        {/* <ChattingBox /> */}
+        메롱
       </div>
       
     </div>

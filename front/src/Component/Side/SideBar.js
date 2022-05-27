@@ -5,7 +5,7 @@ import { Link, history, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
 // component
-import CategoryList from "./categoryList";
+import RoomList from "./RoomList";
 import SideProfile from "./SideProfile";
 import SocketMenuComponent from "../Socket/SocketMenu";
 
@@ -19,7 +19,7 @@ import hideSidebutton from "./image/hide-side-button.png";
 
 
 
-const SideBar = ({ userData, sideData }) => {
+const SideBar = ({ userData }) => {
 
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isShow, setIsShow] = useState(false);
@@ -65,7 +65,7 @@ const SideBar = ({ userData, sideData }) => {
               </div>
               <SideProfile user={userData} />
               <SocketMenuComponent />
-              <CategoryList data={sideData} />
+              <RoomList />
               <img src={sideBarButton} className="side-exit-icon" />
             </div>
           </div >

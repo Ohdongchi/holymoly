@@ -4,19 +4,18 @@ import { Room } from 'src/models/Room.entity';
 import { getConnection } from 'typeorm';
 import { v4 as uuidv4 } from "uuid";
 import { SendMessageDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto } from '../Dto/WebSocketDto';
-
-
 import * as dayjs from "dayjs";
+
+
 import { ChatLog } from 'src/models/ChatLog.entity';
 import { RoomMember } from 'src/models/Neutrality/RoomMember.entity';
 import { User } from 'src/models/User.entity';
 import { WsException } from '@nestjs/websockets';
 import { RoomHashTag } from 'src/models/Neutrality/RoomHashTag.entity';
-import { query } from 'express';
+import { HashTag } from 'src/models/HashTag.entity';
 
 @Injectable()
 export class ChatService {
-    private chatRoomList: Array<string>;
     constructor() {
     }
 
@@ -26,15 +25,16 @@ export class ChatService {
         Room.useConnection(conn);
         RoomMember.useConnection(conn);
         User.useConnection(conn);
+        HashTag.useConnection(conn);
+        RoomHashTag.useConnection(conn);
 
         const findRoom = await Room.createQueryBuilder("room")
             .where("room.roomName = :roomName", { roomName: roomName })
             .leftJoin("room.roomMember", "roomMember.room")
             .getOne();
-        console.log(findRoom);
         if (!findRoom) {
 
-            const room = await conn.transaction(async (queryRunnerManager) => {
+            const insertRoom = await conn.transaction(async (queryRunnerManager) => {
                 const newRoom = new Room();
                 newRoom.roomName = roomName;
                 newRoom.personel = personel;
@@ -48,21 +48,59 @@ export class ChatService {
             conn.transaction(async queryRunnerManager => {
                 const newMember = new RoomMember();
                 newMember.user = user;
-                newMember.room = room;
+                newMember.room = insertRoom;
                 newMember.hostId = user.id;
-                await queryRunnerManager.save(newMember);
+                return await queryRunnerManager.save(newMember);
             });
 
-            payload.hashTag.forEach(res => {
+            // // test 결과 둘이 비슷 비슷 하지만 간단하게 할 때 는 forEach 문이 더 빠르다 ~
+            // for (let i = 0; i < payload.hashTag.length; i++) {
+            //     let res = payload.hashTag[i];
+            //     (async (res) => {
+            //         await HashTag.createQueryBuilder()
+            //             .insert()
+            //             .orIgnore()
+            //             .into(HashTag)
+            //             .values({
+            //                 hashTag: res,
+            //             })
+            //             .execute();
 
+            //         console.log("실행")
+            //     })()
+            // }
+
+            payload.hashTag.forEach(async res => {
+                await HashTag.createQueryBuilder()
+                    .insert()
+                    .orIgnore()
+                    .into(HashTag)
+                    .values({
+                        hashTag: res,
+                    })
+                    .execute();
+                const id = await HashTag.createQueryBuilder("tag")
+                    .select(["tag.id"])
+                    .where("tag.hashTag = :t", { t: res })
+                    .getOne();
+
+                await RoomHashTag.createQueryBuilder()
+                    .insert()
+                    .into(RoomHashTag)
+                    .values({
+                        hashTag: id,
+                        room: insertRoom,
+                    })
+                    .execute();
             });
 
-            client.data.roomName = room.roomName;
-            client.join(room.roomName);
-            client.to(room.roomName).emit("STCCreateRoom", {
+
+            client.data.roomName = insertRoom.roomName;
+            client.join(insertRoom.roomName);
+            client.to(insertRoom.roomName).emit("STCCreateRoom", {
                 id: req.user.id,
                 nickname: req.user.nickname,
-                message: `${req.user.nickname}님이 ${room.roomName}방을 개설하셨습니다.`,
+                message: `${req.user.nickname}님이 ${insertRoom.roomName}방을 개설하셨습니다.`,
             });
 
             return { message: "ok" };
@@ -100,7 +138,6 @@ export class ChatService {
                 return await queryRunnerManager.save(newMember);
             });
 
-            console.log(insert);
 
             client.join(findRoom.roomName);
             client.to(findRoom.roomName).emit("joinChatRoom", {
@@ -160,10 +197,15 @@ export class ChatService {
         const conn = getConnection("waydn");
         Room.useConnection(conn);
 
-        const findRoomAll = await Room.createQueryBuilder("room")
+        const findAllRoom = await Room.createQueryBuilder("room")
             .select(["room.id", "room.roomName"])
+            .leftJoin("room.roomMember", "roomMember")
+            .where("roomMember.hostId = :id", { id: req.user.id })
             .getMany();
-        return findRoomAll;
+
+        client.emit("SgetChatRoomList", findAllRoom);
+
+        return { message: "ok" };
     }
 
     async getAllChatLog(client: Socket, roomId: any, req: any): Promise<any> {

@@ -25,6 +25,7 @@ export class HashTag extends BaseEntity {
     @Column({
         type:"varchar",
         length: "30",
+        unique:true,
     })
     hashTag: string;
 

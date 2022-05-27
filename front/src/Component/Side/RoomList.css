@@ -1,0 +1,21 @@
+.roomList-ul-box>li {
+    width: 100%;
+    overflow: hidden;
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+}
+
+.roomList-ul-box>li:hover {
+    background-color: rgba(204, 200, 200, 0.422);
+
+}
+
+.roomList-ul-box>li>a {
+    color: rgb(108, 224, 224);
+    text-decoration: none;
+}
+
+.roomList-ul-box>li:hover>a {
+    color: white
+}
