@@ -3,28 +3,41 @@
   margin: 15px auto;
 }
 
+.chatting-container > .chatting-infomation  {
+  margin-bottom: 13px;  
+}
+
+.chatting-container > .chatting-infomation>ul>li {
+  list-style-position: inside;
+  overflow: hidden;
+}
+
 .chatting-container > .chatting-room {
   width: 100%;
   height: 700px;
   background-color: rgb(231, 231, 231);
 }
 .chatting-panel-box > form {
+  margin: 5px 0;
+  height:40px;
+  line-height: 40px;
 }
-
 .chatting-panel-box > form > .chatting-text {
   display: inline-block;
-  width: 20em;
-  height: 30px;
-  line-height: 30px;
+  width: 90%;
+  height: inherit;
+  line-height: inherit;
   vertical-align: middle;
+  padding: 3px 8px;
   box-sizing: border-box;
+  outline-color: rgba(212, 212, 212, 0.625);
 }
 
 .chatting-panel-box > form > .chatting-submit {
   display: inline-block;
-  width: auto;
-  height: 30px;
-  line-height: 30px;
+  width: 10%;
+  height: inherit;
+  line-height: inherit;
   vertical-align: middle;
   box-sizing: border-box;
 }

@@ -32,7 +32,7 @@ export class JoinRoomDto {
   roomId: number;
 }
 
-export class SendMessageDto {
+export class SendToServerDto {
   @ApiProperty()
   @IsDefined()
   message: any

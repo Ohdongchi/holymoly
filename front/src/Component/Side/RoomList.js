@@ -40,13 +40,15 @@ const CategoryList = () => {
 
     <ul className="roomList-ul-box">
       {
-        list.map(res => {
-          return <li key={res.id}>
-            <Link to={`/chat/${res.id}`} >
-              {res.roomName}
-            </Link>
-          </li>
-        })
+        cookie.access_token ?
+          list.map(res => {
+            return <li key={res.id}>
+              <Link to={`/chat/${res.id}/${res.roomName}`} >
+                {res.roomName}
+              </Link>
+            </li>
+          })
+          : null
       }
     </ul>
   );

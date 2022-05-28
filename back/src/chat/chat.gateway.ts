@@ -10,7 +10,7 @@ import {
 } from "@nestjs/websockets";
 import { Header, Headers, Logger, Request, UseGuards } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
-import { SendMessageDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto } from "src/Dto/WebSocketDto";
+import { CreateRoomDto, DeleteRoomDto, JoinRoomDto, SendToServerDto } from "src/Dto/WebSocketDto";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 import { ChatService } from "./chat.service";
 
@@ -48,6 +48,7 @@ export class ChatGateway
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage("joinChatRoom")
   async joinChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: JoinRoomDto, @Request() req: any): Promise<any> {
+    console.log(payload);
     return await this.chatService.joinChatRoom(client, payload, req);
   }
 
@@ -59,10 +60,10 @@ export class ChatGateway
   // ----
 
   @UseGuards(JwtAuthGuard)
-  @SubscribeMessage("sendMessage")
-  async sendMessage(@ConnectedSocket() client: Socket, @MessageBody() payload: SendMessageDto, @Request() req: any) {
+  @SubscribeMessage("sendToServer")
+  async sendToServer(@ConnectedSocket() client: Socket, @MessageBody() payload: SendToServerDto, @Request() req: any) {
     console.log("client", client);
-    return await this.chatService.sendMessage(client, payload, req);
+    return await this.chatService.sendToServer(client, payload, req);
   }
 
   // front back 둘다 emit으로 날리면 on으로 받는다

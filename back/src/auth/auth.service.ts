@@ -97,7 +97,6 @@ export class AuthService {
 
   async verify(token: string) {
     const user = await this.jwtService.verify(token);
-    console.log("auth Service", user);
     if (!user) {
       throw new UnauthorizedException("만료된 토큰");
     } else {

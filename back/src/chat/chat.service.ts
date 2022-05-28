@@ -3,7 +3,7 @@ import { Socket } from 'socket.io';
 import { Room } from 'src/models/Room.entity';
 import { getConnection } from 'typeorm';
 import { v4 as uuidv4 } from "uuid";
-import { SendMessageDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto } from '../Dto/WebSocketDto';
+import { SendToServerDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto } from '../Dto/WebSocketDto';
 import * as dayjs from "dayjs";
 
 
@@ -30,10 +30,11 @@ export class ChatService {
 
         const findRoom = await Room.createQueryBuilder("room")
             .where("room.roomName = :roomName", { roomName: roomName })
-            .leftJoin("room.roomMember", "roomMember.room")
+            .leftJoin("room.roomMember", "roomMember")
             .getOne();
         if (!findRoom) {
 
+            // room 생성
             const insertRoom = await conn.transaction(async (queryRunnerManager) => {
                 const newRoom = new Room();
                 newRoom.roomName = roomName;
@@ -41,10 +42,16 @@ export class ChatService {
                 return await queryRunnerManager.save(newRoom);
             });
 
+
+            /*
+                room이 생성되면 생성한 사람도 방의 구성원이기 때문에 roomMember에 추가해준다.
+            */
+
             const user = await User.createQueryBuilder("user")
                 .where("user.id =:id", { id: req.user.id })
                 .getOne();
 
+            // roomMember 추가
             conn.transaction(async queryRunnerManager => {
                 const newMember = new RoomMember();
                 newMember.user = user;
@@ -118,25 +125,31 @@ export class ChatService {
         const conn = getConnection("waydn");
         Room.useConnection(conn);
         RoomMember.useConnection(conn);
-        const findRoom = await Room.createQueryBuilder("room")
-            .where("room.id = :id", { id: payload[0].roomId })
-            .getOne();
 
-        console.log("findRoom", findRoom);
+        const findRoom = await Room.createQueryBuilder("room")
+            .where("room.id = :id", { id: payload.roomId })
+            .getOne();
 
         if (!findRoom) {
             throw new WsException("방을 찾을 수 없습니다.");
-        }
+        } else {
 
-        if (findRoom) {
-            const insert = conn.transaction(async queryRunnerManager => {
-                const newMember = new RoomMember();
-                const newRoom = new Room();
-                console.log(newRoom);
-                newMember.user = req.user;
-                newMember.room = findRoom;
-                return await queryRunnerManager.save(newMember);
-            });
+            // roomMember 추가
+
+            const findMember = await Room.createQueryBuilder("room")
+                .leftJoinAndSelect("room.roomMember", "roomMember")
+                .where("room.id =:roomId", { roomId: payload.roomId })
+                .andWhere("roomMember.userId = :userId", { userId: req.user.id })
+                .getOne();
+
+            console.log(findMember);
+            // const insert = conn.transaction(async queryRunnerManager => {
+            //     const newMember = new RoomMember();
+            //     newMember.user = req.user;
+            //     newMember.room = findRoom;
+            //     return await queryRunnerManager.save(newMember);
+            // });
+
 
 
             client.join(findRoom.roomName);
@@ -219,7 +232,7 @@ export class ChatService {
         return log;
     }
 
-    async sendMessage(client: Socket, payload: SendMessageDto, req: any): Promise<any> {
+    async sendToServer(client: Socket, payload: SendToServerDto, req: any): Promise<any> {
         const conn = getConnection("waydn");
         ChatLog.useConnection(conn);
         Room.useConnection(conn);

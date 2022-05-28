@@ -53,7 +53,9 @@ function App({ history }) {
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
         <Route path="/chat">
-          <Route path=":id" element={<ChattingBox />} />
+          <Route path=":id" >
+            <Route path=":roomName" element={<ChattingBox />} />
+          </Route>
         </Route>
         <Route path="*" element={<div>page not found </div>} />
       </Routes>
