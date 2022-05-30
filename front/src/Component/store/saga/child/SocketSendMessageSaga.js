@@ -8,11 +8,10 @@ import {
     MESSAGE_ERROR
 } from "../../redux/reducer/SendMessage.reducer";
 import { io } from "socket.io-client";
-import { useCookies } from "react-cookie";
 
 const SendMessageAPI = (req) => {
 
-    let socket = io("ws://localhost:3003/chat"); 
+    let socket = io(process.env.REACT_APP_WEBSOCKET_SERVER_ADDRESS + "/chat");
     const data = {
         roomName: "room2",
         personel: 50,
@@ -21,7 +20,7 @@ const SendMessageAPI = (req) => {
         ]
     }
     socket.emit("createChatRoom", data);
-    return 
+    return
 }
 
 function* sendSocketMessage(req) {

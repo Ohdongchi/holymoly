@@ -6,9 +6,9 @@ import { io } from "socket.io-client";
 import { RoomList_ERROR, RoomList_REQUEST, RoomList_RESPONSE } from "../../redux/reducer/RoomList.reducer";
 
 
-function* requestRoomListAPI({token}) {
+function* requestRoomListAPI({ token }) {
     try {
-        let socket = io("http://localhost:3003/chat", {
+        let socket = io(process.env.REACT_APP_WEBSOCKET_SERVER_ADDRESS + "/chat", {
             auth: {
                 access_token: token,
             }

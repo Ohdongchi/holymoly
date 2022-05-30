@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import axios from "axios";
+import axios, { Axios } from "axios";
 
 import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
+
+// Custom
+import customAxios from "./Custom/customAxios";
+
 // Component
 import Home from "./Home/Home";
 import SideBar from "./Side/SideBar";
@@ -30,10 +34,9 @@ function App({ history }) {
 
   useEffect(() => {
     if (token) {
-      // console.log("app:", token);
       setCookie("access_token", token.access_token, {
         expires: new Date(token.expires),
-        path: "*",
+        path: "/",
         httpOnly: false,
         secure: true,
       });
@@ -53,9 +56,7 @@ function App({ history }) {
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
         <Route path="/chat">
-          <Route path=":id" >
-            <Route path=":roomName" element={<ChattingBox />} />
-          </Route>
+          <Route path=":id" element={<ChattingBox />} />
         </Route>
         <Route path="*" element={<div>page not found </div>} />
       </Routes>

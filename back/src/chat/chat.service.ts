@@ -3,7 +3,7 @@ import { Socket } from 'socket.io';
 import { Room } from 'src/models/Room.entity';
 import { getConnection } from 'typeorm';
 import { v4 as uuidv4 } from "uuid";
-import { SendToServerDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto } from '../Dto/WebSocketDto';
+import { SendToServerDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto, HttpChatDto } from '../Dto/ChatDto';
 import * as dayjs from "dayjs";
 
 
@@ -13,6 +13,7 @@ import { User } from 'src/models/User.entity';
 import { WsException } from '@nestjs/websockets';
 import { RoomHashTag } from 'src/models/Neutrality/RoomHashTag.entity';
 import { HashTag } from 'src/models/HashTag.entity';
+import { Request } from 'express';
 
 @Injectable()
 export class ChatService {
@@ -215,9 +216,9 @@ export class ChatService {
             .leftJoin("room.roomMember", "roomMember")
             .where("roomMember.hostId = :id", { id: req.user.id })
             .getMany();
-
-        client.emit("SgetChatRoomList", findAllRoom);
-
+        console.log('hi! 2', findAllRoom);
+        client.emit("sendToClientRoomList", findAllRoom);
+        console.log('hi! 3');
         return { message: "ok" };
     }
 
@@ -261,5 +262,8 @@ export class ChatService {
 
         return { message: "ok" };
     }
+
+    // http
+    
 
 }

@@ -3,26 +3,87 @@
   margin: 15px auto;
 }
 
-.chatting-container > .chatting-infomation  {
-  margin-bottom: 13px;  
+.chatting-container>.chatting-box {
+  width: 100%;
+  height: 700px;
+  border-radius: 5px;
+  position: relative;
 }
 
-.chatting-container > .chatting-infomation>ul>li {
-  list-style-position: inside;
+.chatting-container>.chatting-box>.chatting-infomation {
+  width: 100%;
+  margin-bottom: 13px;
+  padding: 4px 8px 4px 8px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 5px;
+  position: relative;
+  box-sizing: border-box;
+  
+}
+
+.chatting-container>.chatting-box>.chatting-infomation>ul>li {
+  margin-right:5px;
+  display: inline-block;
+  list-style: none;
   overflow: hidden;
 }
 
-.chatting-container > .chatting-room {
+.chatting-container>.chatting-box>.chatting-infomation>.chatting-infomation-hashTag {
   width: 100%;
-  height: 700px;
-  background-color: rgb(231, 231, 231);
+  padding: 3px 0;
 }
-.chatting-panel-box > form {
+
+.chatting-container>.chatting-box>.chatting-infomation>.chatting-infomation-hashTag>a {
+  display: inline-block;
+  margin: 3px 5px;
+  padding: 3px 5px;
+  height: 24px;
+  line-height: 24px;
+  text-decoration: none;
+  color: black;
+  background-color: aliceblue;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.chatting-container>.chatting-box>.chatting-infomation>.chatting-infomation-hashTag>a:hover {
+  color: rgba(91, 91, 91, 0.876);
+}
+
+.chatting-container>.chatting-box>.chatting-window {
+  width: 100%;
+  max-width: 100%;
+  height: 85%;
+  margin: 0 auto;
+  background-color: Red;
+  border-radius: 6px;
+  position: relative;
+  overflow-y: scroll;
+}
+
+.chatting-container>.chatting-box>.chatting-window::-webkit-scrollbar{ 
+  width:0.5em;
+}
+
+.chatting-container>.chatting-box>.chatting-window::-webkit-scrollbar-thumb {
+  background-color: black;
+}
+.chatting-container>.chatting-box>.chatting-window:hover::-webkit-scrollbar-track {
+  background-color: wheat;
+}
+
+.chatting-panel-box {
   margin: 5px 0;
+  height: 15%;
+  line-height: 15%;
+}
+
+.chatting-panel-box>form {
   height:40px;
   line-height: 40px;
 }
-.chatting-panel-box > form > .chatting-text {
+
+.chatting-panel-box>form>.chatting-text {
   display: inline-block;
   width: 90%;
   height: inherit;
@@ -33,11 +94,28 @@
   outline-color: rgba(212, 212, 212, 0.625);
 }
 
-.chatting-panel-box > form > .chatting-submit {
+.chatting-panel-box>form>.chatting-submit {
   display: inline-block;
   width: 10%;
   height: inherit;
   line-height: inherit;
   vertical-align: middle;
   box-sizing: border-box;
+}
+
+
+/* personel */
+.chatting-personel {
+  width:80%;
+  margin: 0 auto;
+}
+.chatting-personel > table{ 
+  border:1px dashed black;
+  border-collapse: collapse;
+}
+.chatting-personel > table > th, tr>td {
+  width:10em;
+  padding: 2px 4px;
+  border:1px dashed black;
+  overflow-x: hidden;
 }

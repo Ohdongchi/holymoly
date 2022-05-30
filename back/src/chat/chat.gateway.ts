@@ -10,7 +10,7 @@ import {
 } from "@nestjs/websockets";
 import { Header, Headers, Logger, Request, UseGuards } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
-import { CreateRoomDto, DeleteRoomDto, JoinRoomDto, SendToServerDto } from "src/Dto/WebSocketDto";
+import { CreateRoomDto, DeleteRoomDto, JoinRoomDto, SendToServerDto } from "src/Dto/ChatDto";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 import { ChatService } from "./chat.service";
 
@@ -53,8 +53,9 @@ export class ChatGateway
   }
 
   @UseGuards(JwtAuthGuard)
-  @SubscribeMessage("CgetAllChatRoomList")
+  @SubscribeMessage("sendToServerRoomList")
   async getAllChatRoomList(@ConnectedSocket() client: Socket, @Request() req: any): Promise<any> {
+    console.log("hi!");
     return await this.chatService.getAllChatRoomList(client, req);
   }
   // ----
@@ -65,6 +66,9 @@ export class ChatGateway
     console.log("client", client);
     return await this.chatService.sendToServer(client, payload, req);
   }
+  
+  // @UseGuards(JwtAuthGuard)
+  // @SubscribeMessage("")
 
   // front back 둘다 emit으로 날리면 on으로 받는다
   afterInit(server: Server) {

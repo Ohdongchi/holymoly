@@ -22,10 +22,22 @@ export class RoomMember extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({
+    type: "int"
+  })
+  userId: number;
+
+  @Column({
+    type:"int"
+  })
+  roomId: number;
+
   @ManyToOne(() => User, (user) => user.roomMember)
+  @JoinColumn({name:"userId"})
   user: User;
 
   @ManyToOne(() => Room, (room) => room.roomMember)
+  @JoinColumn({name:"roomId"})
   room: Room;
 
   @Column({

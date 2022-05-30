@@ -4,7 +4,8 @@ import { AuthService } from "src/auth/auth.service";
 import { ChatGateway } from "./chat.gateway";
 import { ChatService } from "./chat.service";
 @Module({
+  // imports: [ApiModule],
   providers: [ChatGateway, ChatService],
-  exports: [ChatGateway],
+  exports: [ChatGateway, ChatService],
 })
 export class ChatModule {}

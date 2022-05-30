@@ -6,20 +6,20 @@ import reactModal from "react-modal";
 
 import "./customModal.css";
 
-const CustomModal = ({ history, children }) => {
+const CustomModal = ({ history, children, isOpen, isOpenController }) => {
 
-  const isOpen = useSelector(state => state.createChatRoomModalReducer.isOpen);
+
   const dispatch = useDispatch();
 
   const modalController = (e) => {
     if (e.target.className === "custom-modal-container") {
-      dispatch(createChatRoomIsOpenModalRequest())
+      isOpenController();
     }
   }
 
   const modalControllerButton = (e) => {
     if (e.target.className === "line1") {
-      dispatch(createChatRoomIsOpenModalRequest())
+      isOpenController();
     }
   }
 

@@ -3,6 +3,7 @@ import postLoginAPISaga from "./child/LoginSaga";
 import sendSocketSaga from "./child/SocketSendMessageSaga";
 import requestRoomListAPISaga from "./child/RoomListSaga";
 import userVerifySaga from "./child/UserVerifySaga";
+import getInfoAPISaga from "./child/ChatRoomInfoSaga";
 
 export default function* rootSaga() {
     yield all([
@@ -10,5 +11,6 @@ export default function* rootSaga() {
         fork(requestRoomListAPISaga),
         fork(sendSocketSaga),
         fork(userVerifySaga),
+        fork(getInfoAPISaga)
     ])
 }

@@ -8,7 +8,7 @@ import {
 } from "../../redux/reducer/Login.reducer";
 
 const LoginAPI = async (payload) => {
-    return await axios.post("http://localhost:3002/auth/Login", payload);
+    return await axios.post(process.env.REACT_APP_SERVER_ADDRESS + "/auth/Login", payload);
 }
 
 function* postLoginAPI({ payload }) {

@@ -43,3 +43,10 @@ export class SendToServerDto {
   roomId: number;
   
 } 
+
+export class HttpChatDto {
+    @ApiProperty()
+    @IsNumber()
+    @IsDefined()
+    roomId: number;
+}

@@ -11,11 +11,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: (req: any) => {
-
+        
         if (req.handshake) {
           return req.handshake.auth.access_token ? req.handshake.auth.access_token : req.handshake.headers.access_token
         } else {
-          req.headers.access_token
+          return req.headers.access_token
         }
 
         // req 구조를 보고 access_token이 어딨는지 파악해야함

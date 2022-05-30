@@ -4,7 +4,7 @@ import axios from "axios";
 import { VERIFY_ERROR, VERIFY_REQUEST, VERIFY_RESPONSE } from "../../redux/reducer/UserVerify.reducer";
 
 export const verifyAPI = async (token) => {
-    return await axios.post("http://localhost:3002/auth/verify", {}, {
+    return await axios.post(process.env.REACT_APP_SERVER_ADDRESS + "/auth/verify", {}, {
         headers: {
             'Content-Type': 'application/json',
             "access_token": token

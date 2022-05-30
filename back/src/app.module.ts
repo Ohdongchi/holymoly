@@ -20,6 +20,8 @@ import { AuthModule } from './auth/auth.module';
 import { UploadController } from './upload/upload.controller';
 import { UploadService } from './upload/upload.service';
 import { UploadModule } from './upload/upload.module';
+import { ApiController } from './api/api.controller';
+import { ApiModule } from './api/api.module';
 
 @Module({
   imports: [
@@ -55,8 +57,9 @@ import { UploadModule } from './upload/upload.module';
     UserModule,
     AuthModule,
     UploadModule,
+    ApiModule,
   ],
-  controllers: [AppController, AuthController, UploadController],
+  controllers: [AppController, AuthController, UploadController, ApiController],
   providers: [AppService, UploadService],
 })
 export class AppModule {}

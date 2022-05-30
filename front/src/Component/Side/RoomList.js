@@ -10,6 +10,7 @@ import ChattingBox from "../Home/chat/Chatting"
 
 // public
 import "./RoomList.css";
+import { customSocket } from "../Custom/socket.io.custom";
 
 const CategoryList = () => {
 
@@ -18,19 +19,26 @@ const CategoryList = () => {
   const dispatch = useDispatch();
   const [list, setList] = useState([]);
 
-
   useEffect(() => {
     if (cookie.access_token) {
-      let socket = io("http://localhost:3003/chat", {
-        auth: {
-          access_token: cookie.access_token,
-        }
-      });
-      socket.emit("CgetAllChatRoomList");
+      // let socket = io(process.env.REACT_APP_WEBSOCKET_SERVER_ADDRESS + "/chat", {
+      //   auth: {
+      //     access_token: cookie.access_token,
+      //   },
+      //   autoConnect:false
+      // });
 
-      socket.on("SgetChatRoomList", (res) => {
-        setList(res);
-      })
+      // socket.connect().emit("sendToServerRoomList");
+
+      // socket.on("sendToClientRoomList", (res) => {
+      //   console.log(res);
+      //   setList(res);
+      //   socket.disconnect();
+      // });
+
+
+      setList(customSocket("sendToServerRoomList", "sendToClientRoomList", null));
+
     }
   }, [cookie]);
 
@@ -43,7 +51,7 @@ const CategoryList = () => {
         cookie.access_token ?
           list.map(res => {
             return <li key={res.id}>
-              <Link to={`/chat/${res.id}/${res.roomName}`} >
+              <Link to={`/chat/${res.id}`} >
                 {res.roomName}
               </Link>
             </li>

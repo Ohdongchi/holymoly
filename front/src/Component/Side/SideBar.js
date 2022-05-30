@@ -18,15 +18,15 @@ import sideBarButton from "./image/sideBarButton.png";
 import hideSidebutton from "./image/hide-side-button.png";
 
 
-
 const SideBar = ({ userData }) => {
 
+  
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isShow, setIsShow] = useState(false);
   let history = useNavigate();
 
   const LogoutHandler = (e) => {
-
+    console.log("hi");
     removeCookie("access_token");
   }
 

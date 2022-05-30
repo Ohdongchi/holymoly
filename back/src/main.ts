@@ -5,8 +5,8 @@ import { SocketAdapter } from "./adapter/socket_io.adapter";
 import { AppModule } from "./app.module";
 import { setupSwagger } from "./util/swagger";
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.enableCors();
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {cors:true});
+  // app.enableCors();
   app.setBaseViewsDir(join(__dirname, "..", "views"));
   app.useWebSocketAdapter(new SocketAdapter(app));
   setupSwagger(app);

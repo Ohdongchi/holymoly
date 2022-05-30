@@ -50,7 +50,7 @@ const SocketMenuComponent = () => {
     let reg = /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/ ]/gim;
     if (hashTagRef.current.value !== undefined && hashTagRef.current.value !== "") {
       const hashtags = hashTagRef.current.value.trim().replace(reg, " ").split(" ");
-      console.log(hashTagRef);
+
       setFormData({
         ...formData,
         hashTag: formData.hashTag.concat([...new Set(hashtags)]),
@@ -76,6 +76,10 @@ const SocketMenuComponent = () => {
     dispatch(createChatRoomIsOpenModalRequest());
   }
 
+  const onModal = () => {
+    dispatch(createChatRoomIsOpenModalRequest())
+  }
+
   return (
     <>
       {
@@ -86,7 +90,7 @@ const SocketMenuComponent = () => {
                 채팅방 만들기
               </li>
             </ul>
-            <CustomModal>
+            <CustomModal isOpen={isOpen} isOpenController={onModal}>
               <div className="modal-content-container">
                 <h2>채팅방 만들기</h2>
                 <form className="modal-content-comtainer-form" onSubmit={onSubmitHandler}>

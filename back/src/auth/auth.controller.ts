@@ -32,14 +32,14 @@ export class AuthController {
     @Req() req: Request,
     @Body() payload: LoginPayloadDto
   ): Promise<any> {
-    console.log(payload);
+    
     return await this.authService.Login(payload);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("test")
   async test(@Req() req: Request): Promise<any> {
-    console.log(req.user);
+    
     return { message: "ok" };
   }
 
@@ -55,6 +55,7 @@ export class AuthController {
   // @UseGuards(JwtAuthGuard)
   @Post("/verify")
   async verify(@Req() req: any) {
+    console.log("verify");
     return await this.authService.verify(req.headers?.access_token);
   }
 }
