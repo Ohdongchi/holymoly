@@ -35,6 +35,7 @@ const Login = () => {
       password: `${password}`,
     };
     dispatch(loginRequest(submitObject));
+    
     history("/");
     return false;
   };

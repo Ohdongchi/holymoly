@@ -1,13 +1,13 @@
 import { all, fork, takeEvery, call, put } from "@redux-saga/core/effects";
 import axios from "axios";
-import customAxios from "../../../Custom/customAxios";
+import { apiCustomAxios } from "../../../Custom/customAxios";
 
 import {
     CHAT_ROOM_INFO_ERROR, CHAT_ROOM_INFO_REQUEST, CHAT_ROOM_INFO_RESPONSE
 } from "../../redux/reducer/ChatRoomInfo.reducer";
 
 const infoAPI = async ({ roomId, access_token }) => {
-    return await customAxios.post("/info", {roomId});
+    return await apiCustomAxios.post("/info", { roomId });
 }
 
 function* getInfoAPI({ payload }) {

@@ -14,7 +14,7 @@ export const tokenVerify = (payload) => {
     }
 }
 
-const verifyReducer = (state = initState, action) => {
+const VerifyReducer = (state = initState, action) => {
     switch (action.type) {
         case VERIFY_REQUEST:
             return state;
@@ -34,4 +34,4 @@ const verifyReducer = (state = initState, action) => {
     }
 }
 
-export default verifyReducer;
+export default VerifyReducer;

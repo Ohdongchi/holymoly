@@ -1,33 +1,35 @@
 import axios from "axios";
 
-export const RoomList_REQUEST = "RoomList_REQUEST";
-export const RoomList_RESPONSE = "RoomList_RESPONSE";
-export const RoomList_ERROR = "RoomList_ERROR";
+export const ROOM_LIST_REQUEST = "ROOM_LIST_REQUEST";
+export const ROOM_LIST_RESPONSE = "ROOM_LIST_RESPONSE";
+export const ROOM_LIST_ERROR = "ROOM_LIST_ERROR";
 
 const initState = {
   data: [],
   error: "",
 };
 
-export const RoomListRequest = (token) => {
-  return { type: RoomList_REQUEST, token };
+export const roomListRequest = () => {
+  console.log('roomList');
+  return { type: ROOM_LIST_REQUEST };
 };
 
 
 const RoomListReducer = (state = initState, action) => {
   // eslint-disable-next-line default-case
   switch (action.type) {
-    case RoomList_REQUEST:
-      return {
-        ...state,
-      };
-    case RoomList_RESPONSE:
-      return {
-        ...state,
-        data: action.payload,
-      };
-    case RoomList_ERROR:
+    case ROOM_LIST_REQUEST:
       return state;
+    case ROOM_LIST_RESPONSE:
+      return {
+        ...state,
+        payload: action.payload,
+      };
+    case ROOM_LIST_ERROR:
+      return {
+        ...state,
+        error: action.error,
+      }
     default:
       return state;
   }

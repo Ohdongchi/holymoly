@@ -2,36 +2,37 @@ import { all, fork, takeEvery, call, put } from "@redux-saga/core/effects";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { io } from "socket.io-client";
+import { apiCustomAxios } from "../../../Custom/customAxios";
 
-import { RoomList_ERROR, RoomList_REQUEST, RoomList_RESPONSE } from "../../redux/reducer/RoomList.reducer";
+import { ROOM_LIST_ERROR, ROOM_LIST_REQUEST, ROOM_LIST_RESPONSE } from "../../redux/reducer/RoomList.reducer";
 
+const roomListAPI = async (e) => {
+    const test = await apiCustomAxios.post("/roomList");
+    return test.data;
+}
 
-function* requestRoomListAPI({ token }) {
+function* requestRoomListAPI() {
     try {
-        let socket = io(process.env.REACT_APP_WEBSOCKET_SERVER_ADDRESS + "/chat", {
-            auth: {
-                access_token: token,
-            }
-        });
-        socket.emit("getAllChatRoomList");
+        const payload = yield call(roomListAPI, "");
 
         yield put({
-            type: RoomList_RESPONSE,
+            type: ROOM_LIST_RESPONSE,
+            payload
         })
 
     } catch (err) {
         yield put({
-            type: RoomList_ERROR,
+            type: ROOM_LIST_ERROR,
             error: "RoomList api error",
         })
     }
 }
 
 function* catchRoomListAPI() {
-    yield takeEvery(RoomList_REQUEST, requestRoomListAPI);
+    yield takeEvery(ROOM_LIST_REQUEST, requestRoomListAPI);
 }
 
-export default function* requestRoomListAPISaga() {
+export default function* RoomListAPISaga() {
     yield all([
         fork(catchRoomListAPI),
     ]);

@@ -8,9 +8,11 @@ import {
 } from "../../redux/reducer/Login.reducer";
 
 const LoginAPI = async (payload) => {
+
+    //바꾸기
     return await axios.post(process.env.REACT_APP_SERVER_ADDRESS + "/auth/Login", payload);
 }
-
+  
 function* postLoginAPI({ payload }) {
     try {
         const { data } = yield call(LoginAPI, payload);

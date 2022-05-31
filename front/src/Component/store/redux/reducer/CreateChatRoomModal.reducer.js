@@ -14,7 +14,7 @@ export const createChatRoomIsOpenModalRequest = () => {
     };
 }
 
-const createChatRoomModalReducer = (state = initState, action) => {
+const CreateChatRoomModalReducer = (state = initState, action) => {
     switch (action.type) {
         case CREATE_CHAT_ROOM_MODAL:
             return {
@@ -26,4 +26,4 @@ const createChatRoomModalReducer = (state = initState, action) => {
     }
 }
 
-export default createChatRoomModalReducer;
+export default CreateChatRoomModalReducer;

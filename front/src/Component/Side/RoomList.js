@@ -3,7 +3,7 @@ import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
-import { RoomListRequest } from "../store/redux/reducer/RoomList.reducer";
+import { roomListRequest, RoomListRequest } from "../store/redux/reducer/RoomList.reducer";
 
 // component
 import ChattingBox from "../Home/chat/Chatting"
@@ -17,28 +17,13 @@ const CategoryList = () => {
   const [cookie, setCookie, removeCookie] = useCookies();
 
   const dispatch = useDispatch();
-  const [list, setList] = useState([]);
+
+  const list = useSelector(state => state.RoomListReducer.payload)
 
   useEffect(() => {
     if (cookie.access_token) {
-      // let socket = io(process.env.REACT_APP_WEBSOCKET_SERVER_ADDRESS + "/chat", {
-      //   auth: {
-      //     access_token: cookie.access_token,
-      //   },
-      //   autoConnect:false
-      // });
-
-      // socket.connect().emit("sendToServerRoomList");
-
-      // socket.on("sendToClientRoomList", (res) => {
-      //   console.log(res);
-      //   setList(res);
-      //   socket.disconnect();
-      // });
-
-
-      setList(customSocket("sendToServerRoomList", "sendToClientRoomList", null));
-
+      // setList(customSocket("sendToServerRoomList", "sendToClientRoomList", null));
+      dispatch(roomListRequest());
     }
   }, [cookie]);
 
@@ -49,13 +34,13 @@ const CategoryList = () => {
     <ul className="roomList-ul-box">
       {
         cookie.access_token ?
-          list.map(res => {
+          list ? list.map(res => {
             return <li key={res.id}>
               <Link to={`/chat/${res.id}`} >
                 {res.roomName}
               </Link>
             </li>
-          })
+          }) : null
           : null
       }
     </ul>

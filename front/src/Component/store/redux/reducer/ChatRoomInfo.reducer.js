@@ -15,7 +15,7 @@ export const chatRoomInfoRequest = (payload) => {
     };
 }
 
-const chatRoomInfoReducer = (state = initState, action) => {
+const ChatRoomInfoReducer = (state = initState, action) => {
     switch (action.type) {
         case CHAT_ROOM_INFO_REQUEST:
             return state;
@@ -34,4 +34,4 @@ const chatRoomInfoReducer = (state = initState, action) => {
     }
 }
 
-export default chatRoomInfoReducer;
+export default ChatRoomInfoReducer;

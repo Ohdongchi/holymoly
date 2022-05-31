@@ -5,9 +5,6 @@ import axios, { Axios } from "axios";
 import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 
-// Custom
-import customAxios from "./Custom/customAxios";
-
 // Component
 import Home from "./Home/Home";
 import SideBar from "./Side/SideBar";
@@ -17,7 +14,7 @@ import Register from "./Auth/Register/Register";
 
 import ReactModal from "react-modal";
 import ChattingBox from "./Home/chat/Chatting"
-import CustomModal from "./modal/CustomModal";
+import CustomModal from "./Custom/CustomModal";
 
 
 // Public

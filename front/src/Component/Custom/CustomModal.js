@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { createChatRoomIsOpenModalRequest } from "../store/redux/reducer/CreateChatRoom.reducer";
+import { createChatRoomIsOpenModalRequest } from "../store/redux/reducer/CreateChatRoomModal.reducer";
 
 import reactModal from "react-modal";
 

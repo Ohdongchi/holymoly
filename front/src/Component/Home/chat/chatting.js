@@ -10,7 +10,7 @@ import { tokenVerify } from "../../store/redux/reducer/UserVerify.reducer";
 
 import "./chat.css";
 import { chatRoomInfoRequest } from "../../store/redux/reducer/ChatRoomInfo.reducer";
-import CustomModal from "../../modal/CustomModal";
+import CustomModal from "../../Custom/CustomModal";
 const ChattingBox = ({ value }) => {
     const [chatData, setChatData] = useState([]);
     const [chatText, setChatText] = useState("");

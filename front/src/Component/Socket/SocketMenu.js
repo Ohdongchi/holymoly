@@ -7,8 +7,8 @@ import { useCookies } from "react-cookie";
 import ReactModal from "react-modal";
 
 import "./SocketMenu.css";
-import CustomModal from "../modal/CustomModal";
-import { createChatRoomIsOpenModalRequest } from "../store/redux/reducer/CreateChatRoom.reducer";
+import CustomModal from "../Custom/CustomModal";
+import { createChatRoomIsOpenModalRequest } from "../store/redux/reducer/CreateChatRoomModal.reducer";
 
 const SocketMenuComponent = () => {
 
@@ -20,7 +20,7 @@ const SocketMenuComponent = () => {
     hashTag: [],
   });
   const hashTagRef = useRef();
-  const isOpen = useSelector(state => state.createChatRoomModalReducer.isOpen);
+  const isOpen = useSelector(state => state.CreateChatRoomModalReducer.isOpen);
 
   useEffect(() => {
     setFormData({
