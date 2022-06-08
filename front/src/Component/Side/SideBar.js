@@ -5,8 +5,8 @@ import { Link, history, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
 // component
-import RoomList from "./RoomList";
-import SideProfile from "./SideProfile";
+import SideRoomList from "./child/SideRoomList";
+import SideProfile from "./child/SideProfile";
 import SocketMenuComponent from "../Socket/SocketMenu";
 
 // public
@@ -16,17 +16,22 @@ import "./sideBar.css";
 
 import sideBarButton from "./image/sideBarButton.png";
 import hideSidebutton from "./image/hide-side-button.png";
+import { useDispatch } from "react-redux";
+import { tokenVerifyClear } from "../store/redux/reducer/UserVerify.reducer";
+import { roomListClear } from "../store/redux/reducer/RoomList.reducer";
 
 
 const SideBar = ({ userData }) => {
 
-  
+
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isShow, setIsShow] = useState(false);
   let history = useNavigate();
+  let dispatch = useDispatch();
 
   const LogoutHandler = (e) => {
-    console.log("hi");
+    tokenVerifyClear();
+    roomListClear();
     removeCookie("access_token");
   }
 
@@ -65,7 +70,7 @@ const SideBar = ({ userData }) => {
               </div>
               <SideProfile user={userData} />
               <SocketMenuComponent />
-              <RoomList />
+              <SideRoomList />
               <img src={sideBarButton} className="side-exit-icon" />
             </div>
           </div >

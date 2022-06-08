@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import axios, { Axios } from "axios";
 
 import { useCookies } from "react-cookie";
@@ -13,22 +13,23 @@ import Register from "./Auth/Register/Register";
 
 
 import ReactModal from "react-modal";
-import ChattingBox from "./Home/chat/Chatting"
+import ChattingBox from "./Home/Chat/Chatting"
 import CustomModal from "./Custom/CustomModal";
 
 
 // Public
 import "./App.css";
 
-function App({ history }) {
+function App() {
   const [userData, setUserData] = useState([]);
 
   const [cookie, setCookie, removeCookie] = useCookies(["access_token"]);
 
   const token = useSelector(state => state.LoginReducer.payload);
-
-  // console.log(isOpen)
-
+  const history = useNavigate();
+  const location = useLocation();
+  let historyState = location.state;
+  
   useEffect(() => {
     if (token) {
       setCookie("access_token", token.access_token, {
@@ -37,12 +38,9 @@ function App({ history }) {
         httpOnly: false,
         secure: true,
       });
+      document.location.reload();
     }
   }, [token]);
-
-  // useEffect(() => {
-  //   axios.get("http://localhost:3002/category");
-  // }, []);
 
   return (
     <>

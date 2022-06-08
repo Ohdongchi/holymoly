@@ -1,0 +1,39 @@
+.mainRoomList-container {
+    width: 90%;
+    height: 92.3vh;
+    margin: 0 auto;
+    overflow-y: scroll;
+    background-color: rgba(139, 163, 155, 0.639);
+}
+
+.mainRoomList-container::-webkit-scrollbar {
+    display: none;
+}
+
+.mainRoomList-container>.mainRoomList-gridBox {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    justify-content: space-evenly;
+    justify-items: center;
+    align-items: center;
+    margin-top: 3vh;
+}
+
+.mainRoomList-container>.mainRoomList-gridBox>.girdBox-element {
+    display: grid;
+    text-decoration: none;
+    color: black;
+    padding: 5px 8px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.mainRoomList-container>.mainRoomList-gridBox>.girdBox-element:hover {
+    background-color: aliceblue;
+}
+
+.mainRoomList-container>.mainRoomList-gridBox>.girdBox-element>* {
+    padding: 3px 5px;
+    width: 10em;
+    overflow: hidden;
+}

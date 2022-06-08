@@ -21,8 +21,14 @@ export class ApiController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post("/roomList")
-    async roomList(@Req() req: Request) {
-        return await this.apiService.roomList(req);
+    @Post("/SRL")
+    async sideRoomList(@Req() req: Request) {
+        return await this.apiService.sideRoomList(req);
+    }
+    
+    @UseGuards(JwtAuthGuard)
+    @Post("/MRL")
+    async homeRoomList(@Req() req:any) {
+        return await this.apiService.homeRoomList(req);
     }
 }

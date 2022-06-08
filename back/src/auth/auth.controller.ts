@@ -32,7 +32,6 @@ export class AuthController {
     @Req() req: Request,
     @Body() payload: LoginPayloadDto
   ): Promise<any> {
-    
     return await this.authService.Login(payload);
   }
 

@@ -8,13 +8,12 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from "@nestjs/websockets";
-import { Header, Headers, Logger, Request, UseGuards } from "@nestjs/common";
+import { Header, Headers, Logger, Req, Request, UseGuards } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
-import { CreateRoomDto, DeleteRoomDto, JoinRoomDto, SendToServerDto } from "src/Dto/ChatDto";
+import { CreateRoomDto, DeleteRoomDto, JoinRoomDto, SendToServerMessageDto } from "src/Dto/ChatDto";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 import { ChatService } from "./chat.service";
 
-import * as dayjs from "dayjs";
 
 @WebSocketGateway(3003, {
   namespace: "/chat",
@@ -36,39 +35,50 @@ export class ChatGateway
   @SubscribeMessage("createChatRoom")
   async createChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: CreateRoomDto, @Request() req: any): Promise<any> {
     // console.log(payload);
-    return await this.chatService.createChatRoom(client, payload, req);
+    return await this.chatService.createChatRoom(client, payload, req, this.server);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @SubscribeMessage("deleteChatRoom")
-  async deleteChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: DeleteRoomDto, @Request() req: any): Promise<any> {
-    return await this.chatService.deleteChatRoom(client, payload, req);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @SubscribeMessage("deleteChatRoom")
+  // async deleteChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: DeleteRoomDto, @Request() req: any): Promise<any> {
+  //   this.server.socketsLeave
+  //   return await this.chatService.deleteChatRoom(client, payload, req, this.server);
+  // }
 
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage("joinChatRoom")
-  async joinChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: JoinRoomDto, @Request() req: any): Promise<any> {
-    console.log(payload);
-    return await this.chatService.joinChatRoom(client, payload, req);
+  joinChatRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: JoinRoomDto, @Request() req: any): Promise<any> {
+    // console.log(payload);
+    return this.chatService.joinChatRoom(client, payload, req, this.server);
   }
 
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage("sendToServerRoomList")
   async getAllChatRoomList(@ConnectedSocket() client: Socket, @Request() req: any): Promise<any> {
-    console.log("hi!");
+
     return await this.chatService.getAllChatRoomList(client, req);
   }
   // ----
 
   @UseGuards(JwtAuthGuard)
-  @SubscribeMessage("sendToServer")
-  async sendToServer(@ConnectedSocket() client: Socket, @MessageBody() payload: SendToServerDto, @Request() req: any) {
-    console.log("client", client);
-    return await this.chatService.sendToServer(client, payload, req);
+  @SubscribeMessage("getChatLog")
+  async getChatLog(@ConnectedSocket() client: Socket, @MessageBody() payload: any, @Request() req: any) {
+    return await this.chatService.getChatLog(client, payload, req, this.server);
   }
-  
-  // @UseGuards(JwtAuthGuard)
-  // @SubscribeMessage("")
+
+  @UseGuards(JwtAuthGuard)
+  @SubscribeMessage("sendToServerMessage")
+  async sendToServerMessage(@ConnectedSocket() client: Socket, @MessageBody() payload: SendToServerMessageDto, @Request() req: any) {
+
+    return await this.chatService.sendToServerMessage(client, payload, req, this.server);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @SubscribeMessage("exitChatRoom")
+  async exitChatRoom(@ConnectedSocket() client: Socket, @Request() req: any, @MessageBody() payload: any) {
+    console.log("exit room");
+    return await this.chatService.exitChatRoom(client, payload, req, this.server)
+  }
 
   // front back 둘다 emit으로 날리면 on으로 받는다
   afterInit(server: Server) {
@@ -78,9 +88,8 @@ export class ChatGateway
   // 연결됐을 때
 
   handleConnection(@ConnectedSocket() client: Socket) {
+    // joinChatRoom을 여기다가 쓰면 좋을텐데.. 그러면 미세한 컨트롤이 불가할 수 도 있다..
     console.log(`connected websocket ${new Date()}`);
-    // console.log(client)s;
-    client.emit("hello", client.nsp.name);
   }
   // 연결 종료됐을 때
   handleDisconnect(@ConnectedSocket() client: Socket) {

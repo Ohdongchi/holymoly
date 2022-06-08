@@ -18,11 +18,11 @@
   border-radius: 5px;
   position: relative;
   box-sizing: border-box;
-  
+
 }
 
 .chatting-container>.chatting-box>.chatting-infomation>ul>li {
-  margin-right:5px;
+  margin-right: 5px;
   display: inline-block;
   list-style: none;
   overflow: hidden;
@@ -61,13 +61,34 @@
   overflow-y: scroll;
 }
 
-.chatting-container>.chatting-box>.chatting-window::-webkit-scrollbar{ 
-  width:0.5em;
+.chatting-container>.chatting-box>.chatting-window>div {
+  width: auto;
+  display: block;
+  padding: 3px 5px;
+  color: white;
+}
+
+.chatting-container>.chatting-box>.chatting-window>div.chat-right {
+  text-align: right;
+}
+
+.chatting-container>.chatting-box>.chatting-window>div.chat-center {
+  text-align: center;
+}
+
+.chatting-container>.chatting-box>.chatting-window>div.chat-right>div:first-child,
+.chat-left>div :first-child {
+  font-weight: bold;
+}
+
+.chatting-container>.chatting-box>.chatting-window::-webkit-scrollbar {
+  width: 0.5em;
 }
 
 .chatting-container>.chatting-box>.chatting-window::-webkit-scrollbar-thumb {
   background-color: black;
 }
+
 .chatting-container>.chatting-box>.chatting-window:hover::-webkit-scrollbar-track {
   background-color: wheat;
 }
@@ -79,7 +100,7 @@
 }
 
 .chatting-panel-box>form {
-  height:40px;
+  height: 40px;
   line-height: 40px;
 }
 
@@ -106,16 +127,31 @@
 
 /* personel */
 .chatting-personel {
-  width:80%;
+  width: 28em;
   margin: 0 auto;
 }
-.chatting-personel > table{ 
-  border:1px dashed black;
+
+.chatting-personel>table {
   border-collapse: collapse;
+
+  overflow-y: scroll;
 }
-.chatting-personel > table > th, tr>td {
-  width:10em;
-  padding: 2px 4px;
-  border:1px dashed black;
+
+.chatting-personel>table::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+.chatting-personel>table>th {
+  padding: 8px 0;
+}
+
+.chatting-personel>table>tr>td {
+  padding: 5px 8px;
+}
+
+.chatting-personel>table>tr>td {
+  width: 10em;
+  border: 1px dashed black;
+  box-sizing: border-box;
   overflow-x: hidden;
 }

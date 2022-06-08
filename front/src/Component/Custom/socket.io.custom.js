@@ -11,33 +11,50 @@ export const customUseState = (initState) => {
     }
 
     const setState = (newState) => {
+
         state = newState;
     }
-
+    console.log('state', state);
     return [state, setState];
 }
 
+export const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
-export const customSocket = (evServer, evClient, data) => {
+let result;
+export const customSocket = async (evServer, evClient, data) => {
     // console.log(getCookie("access_token"));
-    const [result, setResult] = customUseState([]);
+    // const [result, setResult] = customUseState([]);
 
     let socket = io(process.env.REACT_APP_WEBSOCKET_SERVER_ADDRESS + "/chat", {
         auth: {
             access_token: getCookie("access_token")
         },
-        autoConnect: false
+        autoConnect: true
     });
 
-    // 같은 소켓으로 통신 해야한다.
-    socket.connect().emit(evServer, data ? { data } : undefined);
-    
-    socket.connect().on(evClient, (res) => {
-        setResult(res);
-        socket.disconnect();
-    });
+    socket.emit(evServer, data);
+    // if (evClient !== undefined && evClient !== "") {
+    //     console.log(evClient);
 
-    console.log("result", result);
+    //     await sleep(2000)
+    //     socket.on(evClient, async (res) => {
+    //         console.log(res);
+    //         // setResult(res);
+    //         result = res;
+    //         console.log(result, "result afte");
+    //         return socket.disconnect();
+    //     });
+    //     await sleep(2000)
+
+    //     console.log("끝?");
+    // } else {
+    //     socket.disconnect();
+    // }
+    // if (!result) {
+    //     console.log("없음?");
+    //     return { message: "ok" };
+    // }
     return result;
-
 }

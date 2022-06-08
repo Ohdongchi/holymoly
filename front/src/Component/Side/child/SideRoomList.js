@@ -3,14 +3,14 @@ import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
-import { roomListRequest, RoomListRequest } from "../store/redux/reducer/RoomList.reducer";
+import { sideRoomListRequest } from "../../store/redux/reducer/RoomList.reducer";
 
 // component
-import ChattingBox from "../Home/chat/Chatting"
+import ChattingBox from "../../Home/Chat/Chatting"
 
 // public
-import "./RoomList.css";
-import { customSocket } from "../Custom/socket.io.custom";
+import "./SideRoomList.css";
+import { customSocket } from "../../Custom/socket.io.custom";
 
 const CategoryList = () => {
 
@@ -18,12 +18,12 @@ const CategoryList = () => {
 
   const dispatch = useDispatch();
 
-  const list = useSelector(state => state.RoomListReducer.payload)
-
+  const list = useSelector(state => state.RoomListReducer.sideRoomList);
+  
   useEffect(() => {
     if (cookie.access_token) {
       // setList(customSocket("sendToServerRoomList", "sendToClientRoomList", null));
-      dispatch(roomListRequest());
+      dispatch(sideRoomListRequest());
     }
   }, [cookie]);
 

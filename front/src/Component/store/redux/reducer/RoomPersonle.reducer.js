@@ -7,15 +7,15 @@ const initState = {
     error: null,
 }
 
-export const chatRoomInfoRequest = (payload) => {
-    
+export const requestPersonel = (roomId) => {
+
     return {
         type: CHAT_ROOM_INFO_REQUEST,
-        payload
+        roomId
     };
 }
 
-const ChatRoomInfoReducer = (state = initState, action) => {
+const RoomPersonelReducer = (state = initState, action) => {
     switch (action.type) {
         case CHAT_ROOM_INFO_REQUEST:
             return state;
@@ -34,4 +34,4 @@ const ChatRoomInfoReducer = (state = initState, action) => {
     }
 }
 
-export default ChatRoomInfoReducer;
+export default RoomPersonelReducer;

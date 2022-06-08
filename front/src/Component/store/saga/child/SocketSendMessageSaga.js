@@ -12,15 +12,8 @@ import { io } from "socket.io-client";
 const SendMessageAPI = (req) => {
 
     let socket = io(process.env.REACT_APP_WEBSOCKET_SERVER_ADDRESS + "/chat");
-    const data = {
-        roomName: "room2",
-        personel: 50,
-        hashTag: [
-            "trip"
-        ]
-    }
-    socket.emit("createChatRoom", data);
-    return
+    
+    // socket.emit("createChatRoom", data);
 }
 
 function* sendSocketMessage(req) {

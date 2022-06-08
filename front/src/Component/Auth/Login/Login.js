@@ -4,7 +4,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { loginRequest } from "../../store/redux/reducer/Login.reducer";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // public
 import "./Login.css";
@@ -16,6 +16,7 @@ const Login = () => {
   const [cookie, setCookie, removeCookie] = useCookies(["access_token"]);
   const [saveChecked, setSaveChecked] = useState(false);
   let history = useNavigate();
+  let location = useLocation();
 
   const token = useSelector(state => state.LoginReducer.payload);
   // httpOnly = css(cross site scripting) 공격 막힘
@@ -35,8 +36,10 @@ const Login = () => {
       password: `${password}`,
     };
     dispatch(loginRequest(submitObject));
-    
-    history("/");
+
+    history("/", {
+      replace: true,
+    });
     return false;
   };
 

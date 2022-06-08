@@ -41,11 +41,11 @@ export class ApiService {
             }),
             "roomPersonel": roomPersonel,
         };
-        console.log("roomHashTag", info);
+        // console.log("roomHashTag", info);
         return info;
     }
 
-    async roomList(req: any) {
+    async sideRoomList(req: any) {
         const conn = getConnection("waydn");
         Room.useConnection(conn);
         RoomMember.useConnection(conn);
@@ -53,12 +53,35 @@ export class ApiService {
             const list = await Room.createQueryBuilder("room")
                 .select(["room.id", "room.roomName", "room.personel", "roomMember.hostId"])
                 .innerJoin("room.roomMember", "roomMember")
-                .where("roomMember.hostId = :hostId", { hostId: req.user?.id })
+                .where("roomMember.userId = :userId", { userId: req.user?.id })
                 .getMany();
-            console.log(list);
             return list;
         }
 
         return { message: "failed" };
+    }
+
+    async homeRoomList(req: any) {
+        const conn = getConnection("waydn");
+        Room.useConnection(conn);
+        RoomMember.useConnection(conn);
+        const list = await Room.createQueryBuilder("room")
+            .select([
+                "room.id",
+                "room.roomName",
+                "room.personel",
+                "room.createdAt",
+                "roomMember.hostId",
+                "user.id",
+                "user.nickname"
+            ])
+            .leftJoin("room.roomMember", "roomMember")
+            .leftJoin("roomMember.user", "user")
+            .orderBy("room.createdAt", "DESC")
+            .getMany();
+
+        console.log(list);
+
+        return list;
     }
 }

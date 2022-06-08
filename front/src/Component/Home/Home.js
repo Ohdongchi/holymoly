@@ -5,19 +5,16 @@ import axios from "axios";
 
 // component
 import Login from "../Auth/Login/Login";
-import ChattingBox from "./chat/Chatting"
+import ChattingBox from "./Chat/Chatting"
 // public
 import "./home.css";
+import MainRoomList from "./RoomList/MainRoomList";
 
 const Home = () => {
-  const token = "";
+  
   return (
     <div className="home">
-      <div>
-        {/* <ChattingBox /> */}
-        메롱
-      </div>
-      
+      <MainRoomList />
     </div>
   );
 };

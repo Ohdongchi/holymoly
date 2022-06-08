@@ -11,10 +11,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: (req: any) => {
-        
+        // console.log(req);
         if (req.handshake) {
+          // console.log("handshake", req.handshake);
           return req.handshake.auth.access_token ? req.handshake.auth.access_token : req.handshake.headers.access_token
         } else {
+          // console.log("headers", req.headers);
           return req.headers.access_token
         }
 

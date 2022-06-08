@@ -35,6 +35,12 @@ export class ChatLog extends BaseEntity {
     })
     roomId: number;
 
+    @Column({
+        type: "varchar",
+        length: 20,
+    })
+    nickname: string;
+
     @CreateDateColumn()
     createdAt: Date;
 }

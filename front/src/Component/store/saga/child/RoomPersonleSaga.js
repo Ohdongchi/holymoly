@@ -4,15 +4,16 @@ import { apiCustomAxios } from "../../../Custom/customAxios";
 
 import {
     CHAT_ROOM_INFO_ERROR, CHAT_ROOM_INFO_REQUEST, CHAT_ROOM_INFO_RESPONSE
-} from "../../redux/reducer/ChatRoomInfo.reducer";
+} from "../../redux/reducer/RoomPersonle.reducer";
 
-const infoAPI = async ({ roomId, access_token }) => {
+const infoAPI = async (roomId) => {
     return await apiCustomAxios.post("/info", { roomId });
 }
 
-function* getInfoAPI({ payload }) {
+function* getInfoAPI({ roomId }) {
     try {
-        const { data } = yield call(infoAPI, payload);
+
+        const { data } = yield call(infoAPI, roomId);
         yield put({
             type: CHAT_ROOM_INFO_RESPONSE,
             payload: data,

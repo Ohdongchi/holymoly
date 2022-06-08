@@ -1,9 +1,9 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Room } from 'src/models/Room.entity';
 import { getConnection } from 'typeorm';
 import { v4 as uuidv4 } from "uuid";
-import { SendToServerDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto, HttpChatDto } from '../Dto/ChatDto';
+import { SendToServerMessageDto, CreateRoomDto, DeleteRoomDto, JoinRoomDto, HttpChatDto } from '../Dto/ChatDto';
 import * as dayjs from "dayjs";
 
 
@@ -20,7 +20,8 @@ export class ChatService {
     constructor() {
     }
 
-    async createChatRoom(client: Socket, payload: CreateRoomDto, req: any): Promise<any> {
+    // complete
+    async createChatRoom(client: Socket, payload: CreateRoomDto, req: any, server: any): Promise<any> {
         const { roomName, personel, hashTag } = payload;
         const conn = getConnection("waydn");
         Room.useConnection(conn);
@@ -31,6 +32,8 @@ export class ChatService {
 
         const findRoom = await Room.createQueryBuilder("room")
             .where("room.roomName = :roomName", { roomName: roomName })
+
+
             .leftJoin("room.roomMember", "roomMember")
             .getOne();
         if (!findRoom) {
@@ -42,7 +45,6 @@ export class ChatService {
                 newRoom.personel = personel;
                 return await queryRunnerManager.save(newRoom);
             });
-
 
             /*
                 room이 생성되면 생성한 사람도 방의 구성원이기 때문에 roomMember에 추가해준다.
@@ -60,24 +62,6 @@ export class ChatService {
                 newMember.hostId = user.id;
                 return await queryRunnerManager.save(newMember);
             });
-
-            // // test 결과 둘이 비슷 비슷 하지만 간단하게 할 때 는 forEach 문이 더 빠르다 ~
-            // for (let i = 0; i < payload.hashTag.length; i++) {
-            //     let res = payload.hashTag[i];
-            //     (async (res) => {
-            //         await HashTag.createQueryBuilder()
-            //             .insert()
-            //             .orIgnore()
-            //             .into(HashTag)
-            //             .values({
-            //                 hashTag: res,
-            //             })
-            //             .execute();
-
-            //         console.log("실행")
-            //     })()
-            // }
-
             payload.hashTag.forEach(async res => {
                 await HashTag.createQueryBuilder()
                     .insert()
@@ -103,9 +87,9 @@ export class ChatService {
             });
 
 
-            client.data.roomName = insertRoom.roomName;
+            // client.data.roomName = insertRoom.roomName;s
             client.join(insertRoom.roomName);
-            client.to(insertRoom.roomName).emit("STCCreateRoom", {
+            server.to(insertRoom.roomName).emit("STCCreateRoom", {
                 id: req.user.id,
                 nickname: req.user.nickname,
                 message: `${req.user.nickname}님이 ${insertRoom.roomName}방을 개설하셨습니다.`,
@@ -114,14 +98,12 @@ export class ChatService {
             return { message: "ok" };
         } else {
             console.log("실패");
-            client.emit("error", {
-                error: "이미 존재하는 채팅방 입니다.",
-            })
             return { message: "failed" };
         }
     }
 
-    async joinChatRoom(client: Socket, payload: JoinRoomDto, req: any): Promise<any> {
+    // complete
+    async joinChatRoom(client: Socket, payload: JoinRoomDto, req: any, server: Server): Promise<any> {
 
         const conn = getConnection("waydn");
         Room.useConnection(conn);
@@ -132,10 +114,8 @@ export class ChatService {
             .getOne();
 
         if (!findRoom) {
-            throw new WsException("방을 찾을 수 없습니다.");
+            return { meesage: "방을 찾을 수 없습니다." };
         } else {
-
-            // roomMember 추가
 
             const findMember = await Room.createQueryBuilder("room")
                 .leftJoinAndSelect("room.roomMember", "roomMember")
@@ -143,70 +123,121 @@ export class ChatService {
                 .andWhere("roomMember.userId = :userId", { userId: req.user.id })
                 .getOne();
 
-            console.log(findMember);
-            // const insert = conn.transaction(async queryRunnerManager => {
-            //     const newMember = new RoomMember();
-            //     newMember.user = req.user;
-            //     newMember.room = findRoom;
-            //     return await queryRunnerManager.save(newMember);
-            // });
+            // console.log("findMember", findMember);
+            if (!findMember) {
+                // roomMember 추가
+                conn.transaction(async queryRunnerManager => {
+                    const newMember = new RoomMember();
+                    newMember.user = req.user;
+                    newMember.room = findRoom;
+                    return await queryRunnerManager.save(newMember);
+                });
+            }
+            await conn.transaction(async queryRunnerManager => {
+                let log = new ChatLog();
+                log.message = `${req.user.nickname}님이 입장하셨습니다.`;
+                log.userId = req.user.id
+                log.roomId = payload.roomId;
+                log.nickname = req.user.nickname;
+                return await queryRunnerManager.save(log);
+            });
 
-
-
-            client.join(findRoom.roomName);
-            client.to(findRoom.roomName).emit("joinChatRoom", {
-                id: req.user.id,
+            client.join(`${payload.roomId}`);
+            server.to(`${payload.roomId}`).emit("joinedRoom", {
+                userId: req.user.id,
                 nickname: req.user.nickname,
                 message: `${req.user.nickname}님이 입장하셨습니다.`,
+                roomId: payload.roomId,
+                join: true,
             });
+
             return { message: "ok" };
         }
-
-        return { message: "failed" };
     }
 
-    async deleteChatRoom(client: Socket, paylaod: DeleteRoomDto, req: any): Promise<any> {
-        const { roomId } = paylaod;
+    // exitedRoom에 통합
+    // async deleteChatRoom(client: Socket, paylaod: DeleteRoomDto, req: any, server: any): Promise<any> {
+    //     const { roomId } = paylaod;
+    //     const conn = getConnection("waydn");
+    //     Room.useConnection(conn);
+    //     RoomHashTag.useConnection(conn);
+
+    //     const findRoom = await Room.createQueryBuilder("room")
+    //         .leftJoinAndSelect("room.roomMember", "roomMember")
+    //         .where("room.id = :roomId", { roomId })
+    //         .andWhere("roomMember.hostId = :id", { id: req.user.id })
+    //         .getOne();
+
+    //     if (findRoom && req.user.id === findRoom.roomMember[0].hostId) {
+    //         findRoom.deletedAt = new Date();
+    //         conn.transaction(async (queryRunnerManager) => {
+    //             await queryRunnerManager.save(findRoom);
+    //         });
+    //         server.socketsLeave(`${roomId}`);
+    //         return { message: "ok" };
+    //     } else {
+    //         throw new WsException("존재하지 않는 채팅룸 입니다..");
+    //     }
+    // }
+
+    // 끝
+    async exitChatRoom(client: Socket, payload: any, req: any, server: any): Promise<any> {
+
         const conn = getConnection("waydn");
         Room.useConnection(conn);
-        RoomHashTag.useConnection(conn);
+        RoomMember.useConnection(conn);
 
-        const findRoom = await Room.createQueryBuilder("room")
-            .leftJoinAndSelect("room.roomMember", "roomMember")
-            .where("room.id = :roomId", { roomId })
-            .andWhere("roomMember.hostId = :id", { id: req.user.id })
+        const realMemeber = await RoomMember.createQueryBuilder("roomMember")
+            .where("roomMember.roomId = :roomId", { roomId: payload.roomId })
+            .andWhere("roomMember.userId = :userId", { userId: req.user.id })
             .getOne();
 
-        if (findRoom && req.user.id === findRoom.roomMember[0].hostId) {
-            findRoom.deletedAt = new Date();
-            conn.transaction(async (queryRunnerManager) => {
-                await queryRunnerManager.save(findRoom);
+        if (!realMemeber) {
+            throw new WsException("유저를 찾을 수 없습니다.");
+        }
+
+        if (realMemeber.hostId == req.user.id) {
+            // 만약 hostId 와 요청한 user의 id가 같다면 채팅방 삭제
+            const findRoom = await Room.createQueryBuilder("room")
+                .leftJoinAndSelect("room.roomMember", "roomMember")
+                .where("room.id = :roomId", { roomId: payload.roomId })
+                .andWhere("roomMember.hostId = :id", { id: req.user.id })
+                .getOne();
+            
+            const test = await conn.transaction(async (queryRunnerManager) => {
+                findRoom.deletedAt = new Date();
+                return await queryRunnerManager.save(findRoom);
             });
-            return { message: "ok" };
-        } else {
-            throw new WsException("존재하지 않는 채팅룸 입니다..");
-        }
-    }
-    async exitChatRoom(client: Socket, payload: any, req: any): Promise<any> {
-        const rn = await Room.createQueryBuilder("room")
-            .select(["room.roomName"])
-            .where("room.id = :id", { id: payload.roomId })
-            .getOne();
-
-        if (rn) {
-            throw new WsException("방을 찾을 수 없습니다.");
+            
         }
 
-        client.leave(rn.roomName);
-        client.to(rn.roomName).emit("exitChatRoom", {
-            id: req.user.id,
+        // // 채팅방 목록에서 채팅방 해당 인원 삭제
+        await RoomMember.createQueryBuilder("roomMember")
+            .delete()
+            .where("roomMember.roomId = :roomId", { roomId: payload.roomId })
+            .andWhere("roomMember.userId = :userId", { userId: req.user.id })
+            .execute();
+
+        await conn.transaction(async queryRunnerManager => {
+            let log = new ChatLog();
+            log.message = `${req.user.nickname}님이 떠나셨습니다.`;
+            log.userId = req.user.id
+            log.roomId = payload.roomId;
+            log.nickname = req.user.nickname;
+            return await queryRunnerManager.save(log);
+        });
+
+        server.to(`${payload.roomId}`).emit("exitedChatRoom", {
+            userId: req.user.id,
             nickname: req.user.nickname,
             message: `${req.user.nickname}님이 떠나셨습니다.`,
         });
+        client.leave(`${payload.roomId}`);
 
         return { message: "ok" };
     }
 
+    // complete
     async getAllChatRoomList(client: Socket, req: any): Promise<any> {
         const conn = getConnection("waydn");
         Room.useConnection(conn);
@@ -216,24 +247,29 @@ export class ChatService {
             .leftJoin("room.roomMember", "roomMember")
             .where("roomMember.hostId = :id", { id: req.user.id })
             .getMany();
-        console.log('hi! 2', findAllRoom);
+        // console.log('hi! 2', findAllRoom);
         client.emit("sendToClientRoomList", findAllRoom);
-        console.log('hi! 3');
+        // console.log('hi! 3');
         return { message: "ok" };
     }
 
-    async getAllChatLog(client: Socket, roomId: any, req: any): Promise<any> {
+    // complete
+    async getChatLog(client: Socket, payload: any, req: any, server: any): Promise<any> {
         const conn = getConnection("waydn");
         ChatLog.useConnection(conn);
 
         const log = await ChatLog.createQueryBuilder("chatLog") // ChatLog => 별명으로 chatLog
-            .where("chatlog.roomId = :roomId", { roomId })
+            .select(["chatLog.id", "chatLog.userId", "chatLog.nickname", "chatLog.message", "chatLog.roomId"])
+            .where("chatLog.roomId = :roomId", { roomId: payload.roomId })
+            .orderBy("chatLog.createdAt", "DESC")
+            // .limit(10)
             .getMany();
-
-        return log;
+        server.emit("getChatLogList", log);
+        return { message: "ok" };
     }
 
-    async sendToServer(client: Socket, payload: SendToServerDto, req: any): Promise<any> {
+    // complete
+    async sendToServerMessage(client: Socket, payload: SendToServerMessageDto, req: any, server: Server): Promise<any> {
         const conn = getConnection("waydn");
         ChatLog.useConnection(conn);
         Room.useConnection(conn);
@@ -242,28 +278,32 @@ export class ChatService {
             .where("room.id = :roomId", { roomId: payload.roomId })
             .getOne();
 
-        if (rn) {
+        if (!rn) {
             throw new WsException("방을 찾을 수 없습니다.");
         }
-
         await conn.transaction(async queryRunnerManager => {
             let log = new ChatLog();
             log.message = payload.message;
-            log.id = req.user.id
+            log.userId = req.user.id
             log.roomId = payload.roomId;
-            await queryRunnerManager.save(log);
+            log.nickname = req.user.nickname;
+            return await queryRunnerManager.save(log);
         });
 
-        client.to(rn.roomName).emit("STCMessage", {
-            id: req.user.id,
+        // console.log("send Message");
+        server.to(`${payload.roomId}`).emit("sendToClientMessage", {
+            userId: req.user.id, // userId 로 구분해서 소켓에 전송하면 데이터를 받아 이방 데이터가 맞는지 확인하기
             nickname: req.user.nickname,
             message: payload.message,
+            roomId: payload.roomId
         });
+
+        // console.log("message room", client.id);
 
         return { message: "ok" };
     }
 
     // http
-    
+
 
 }

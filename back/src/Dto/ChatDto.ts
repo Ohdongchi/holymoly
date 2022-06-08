@@ -32,7 +32,7 @@ export class JoinRoomDto {
   roomId: number;
 }
 
-export class SendToServerDto {
+export class SendToServerMessageDto {
   @ApiProperty()
   @IsDefined()
   message: any
@@ -41,12 +41,12 @@ export class SendToServerDto {
   @IsDefined()
   @IsNumber()
   roomId: number;
-  
-} 
+
+}
 
 export class HttpChatDto {
-    @ApiProperty()
-    @IsNumber()
-    @IsDefined()
-    roomId: number;
+  @ApiProperty()
+  @IsNumber()
+  @IsDefined()
+  roomId: number;
 }

@@ -3,102 +3,137 @@ import axios from 'axios';
 import { io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
+
+// reducer
 import { sendSocketMessageRequest } from "../../store/redux/reducer/SendMessage.reducer";
 import { tokenVerify } from "../../store/redux/reducer/UserVerify.reducer";
+import { requestPersonel } from "../../store/redux/reducer/RoomPersonle.reducer";
 
+// public
 import "./chat.css";
-import { chatRoomInfoRequest } from "../../store/redux/reducer/ChatRoomInfo.reducer";
+
+// component
 import CustomModal from "../../Custom/CustomModal";
+import { customSocket, sleep } from "../../Custom/socket.io.custom";
+import { getCookie } from "../../Custom/customAxios";
+
+
+let socket = io(process.env.REACT_APP_WEBSOCKET_SERVER_ADDRESS + "/chat", {
+    auth: {
+        access_token: getCookie("access_token")
+    },
+    autoConnect: false,
+    reconnectionDelayMax: 5000,
+});
+
+
 const ChattingBox = ({ value }) => {
     const [chatData, setChatData] = useState([]);
     const [chatText, setChatText] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    const [path, setPath] = useState("");
 
     const [cookie, setCookie, removeCookie] = useCookies();
 
     const dispatch = useDispatch();
     const history = useNavigate();
-    const paramsId = useParams().id;
-
-    const user = useSelector(state => state.verifyReducer.payload);
-
-    const roomInfo = useSelector(state => state.chatRoomInfoReducer.payload);
-
-    const [isOpen, setIsOpen] = useState(false);
-
-    // 생각해봤을 때 유저당 한개의 소켓을 가지고 있어야,
-    // 방을 만들어서 방에서 대화할 수 있는 틀을 만들 수 있지 않을까 싶다.
-    // 그래서 socket.io 연결을 redux로 옮겨서 중앙 상태값으로 관리 해야할듯 싶다.
-    //ws://localhost:3003/chat
+    const paramRoomId = useParams().id;
+    const location = useLocation();
+    const user = useSelector(state => state.VerifyReducer.payload);
+    const roomInfo = useSelector(state => state.RoomPersonelReducer.payload);
 
 
     useEffect(() => {
         if (!cookie.access_token) {
             history("/");
         }
-    }, [cookie])
+    }, [cookie]);
 
     useEffect(() => {
         // user 정보 가져오기
         dispatch(tokenVerify(cookie.access_token));
-        dispatch(chatRoomInfoRequest({
-            roomId: paramsId,
-            access_token: cookie.access_token
-        }));
-        // 채팅방 입장 및 채팅목록
-        let socket = io("http://localhost:3003/chat", {
-            auth: {
-                access_token: cookie.access_token,
+        // user 구성원 목록 및 채팅방 정보 가져오기
+        dispatch(requestPersonel(paramRoomId));
+
+        socket.connect().emit("joinChatRoom", { roomId: paramRoomId });
+        socket.connect().emit("getChatLog", { roomId: paramRoomId });
+    }, [paramRoomId]);
+
+    useEffect(() => {
+        socket.connect().on("joinedRoom", ({ userId, nickname, message, roomId, join }) => {
+            if (roomId == paramRoomId) {
+                setChatData(prev => [...prev, { userId, nickname, message, join }]);
             }
         });
+        socket.connect().on('sendToClientMessage', ({ userId, nickname, message, roomId }) => {
+            if (roomId == paramRoomId)
+                setChatData(prev => [...prev, { userId, nickname, message }]);
+        });
 
-        // socket.emit("joinChatRoom", {
-        //     roomId: paramsId
-        // })
-    }, [paramsId]);
+        socket.connect().on("exitedChatRoom", (res) => {
+            setChatData(prev => [...prev, res]);
+        });
 
-
-    const onChangeChatTextHandler = (e) => {
-        setChatText(e.target.value)
-    }
+        socket.connect().on("getChatLogList", (res) => {
+            setChatData(chatData.concat(res.reverse()));
+        })
+        
+    }, []);
 
     const onSubmitHandler = (e) => {
-        let socket = io("http://localhost:3003/chat", {
-            auth: {
-                access_token: cookie.access_token,
-            }
-        });
+        e.preventDefault();
 
         if (chatText !== "") {
-            socket.emit("sendToServer", {
+            socket.connect().emit("sendToServerMessage", {
                 message: chatText,
-                roomId: paramsId,
+                roomId: paramRoomId
             });
-            socket.disconnect();
         } else {
             alert("채팅을 입력하세요")
         }
         setChatText("");
     }
 
+    const onChangeChatTextHandler = (e) => {
+        setChatText(e.target.value)
+    }
+
     const onModal = () => {
         isOpen ? setIsOpen(false) : setIsOpen(true);
     }
+
+    const exitChatRoom = (e) => {
+        socket.connect().emit("exitChatRoom", {
+            roomId: paramRoomId,
+        });
+
+        history("/");
+        document.location.reload();
+    }
+
+    useEffect(() => {
+    }, [chatData]);
+
 
     return (
         <div className="chat">
             <div className="chatting-container">
                 <CustomModal isOpen={isOpen} isOpenController={onModal}>
-                    <div>
-                        <div className="chatting-personel">
-                            <table>
-                                <th>
+
+                    <div className="chatting-personel">
+                        <table>
+                            <thead>
+                                <th colSpan={3}>
                                     유저목록
                                 </th>
+                            </thead>
+                            <tbody>
                                 <tr>
                                     <td>Nickname</td>
                                     <td>Email</td>
+                                    <td>본인 여부</td>
                                 </tr>
                                 {
                                     roomInfo ? roomInfo.roomPersonel.map((res, index) => {
@@ -110,8 +145,8 @@ const ChattingBox = ({ value }) => {
                                         );
                                     }) : null
                                 }
-                            </table>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </CustomModal>
                 <div className="chatting-box">
@@ -119,6 +154,7 @@ const ChattingBox = ({ value }) => {
                         <ul>
                             <li><label>채팅방 이름: {roomInfo ? roomInfo.roomName : ""}</label></li>
                             <li onClick={onModal}><input type="button" value="구성원" /></li>
+                            <li onClick={exitChatRoom}><input type="button" value="채팅방 나기기" /></li>
                         </ul>
                         <div className="chatting-infomation-hashTag">
                             {
@@ -129,19 +165,37 @@ const ChattingBox = ({ value }) => {
                         </div>
                     </div>
                     <div className="chatting-window">
-                        asd
                         {
-                            chatData.map(res => (
-                                <span>
-                                    {res.message}
-                                </span>
-                            ))
+                            chatData ?
+                                chatData.map((res, index) => {
+                                    return (
+                                        <>
+                                            {
+                                                res.join ?
+                                                    <div key={index} className="chat-center">
+                                                        <div key={index}>{res.message}</div>
+                                                    </div>
+                                                    : res.userId == user.id ?
+                                                        <div key={index} className="chat-right">
+                                                            <div key={index}>{res.nickname}</div>
+                                                            <div key={index}>{res.message}</div>
+                                                        </div>
+                                                        : <div key={index} className="chat-left">
+                                                            <div key={index}>{res.nickname}</div>
+                                                            <div key={index}>{res.message}</div>
+                                                        </div>
+
+                                            }
+                                        </>
+                                    );
+                                })
+                                : null
                         }
                     </div>
                 </div>
                 <div className="chatting-panel-box">
                     <form onSubmit={onSubmitHandler}>
-                        <input type="text" className="chatting-text" onChange={onChangeChatTextHandler} />
+                        <input type="text" className="chatting-text" onChange={onChangeChatTextHandler} value={chatText} />
                         <input type="submit" className="chatting-submit" value="전송" />
                     </form>
                 </div>

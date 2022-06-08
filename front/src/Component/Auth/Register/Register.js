@@ -6,10 +6,14 @@ import dayjs from "dayjs";
 
 // public
 import "./Register.css";
+import { useNavigate } from "react-router-dom";
 
 
 
 const RegisterComponent = () => {
+
+  const history = useNavigate()
+
   const [value, setValue] = useState({
     email: "",
     password: "",
@@ -54,6 +58,7 @@ const RegisterComponent = () => {
   //backend multer 작업하기
   const onSubmitHandler = () => {
     axios.post("http://localhost:3002/auth/register", value);
+    history("/");
   };
 
   return (
